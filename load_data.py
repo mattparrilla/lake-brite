@@ -57,5 +57,3 @@ def get_metric(metric, data=load_all_csvs()):
                 metric_data[metric][station].append(reading)
 
     return metric_data
-
-print_all_values_of_field('Station')
