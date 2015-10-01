@@ -20,4 +20,6 @@ This is a bit contrary to how we normally think of GIFs (as containing a complet
 
 Each individual GIF must be 50x15 in size and contain 10 frames. The first frame represents the front 50x15 slice of the display, the second from is the slice behind that, and so on.
 
+![LakeBrite interface design](http://i.imgur.com/LkX8dku.png)
+
 In order to animate the display, a series of GIFs of these dimensions and frame length must be passed along.
