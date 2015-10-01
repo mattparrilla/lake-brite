@@ -39,6 +39,3 @@ images = generate_pil_images(matrix)
 arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
 gif = generate_gif(arrays, 'array2')
 gif = generate_gif(images, 'test2')
-
-
-# next step: get RGB out of matrix (unless passing image, apply color map)

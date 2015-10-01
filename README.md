@@ -2,9 +2,13 @@
 
 Creating visualizations using the 7,500 node LED matrix at Burlington's [ECHO Center](http://www.echovermont.org/).
 
+![LakeBrite display](http://i.imgur.com/8GAk0KX.jpg)
+
 ##About The Display
 
 The LED matrix is approximately 24ft wide by 9ft tall by 5ft deep. In terms of LED nodes, this translates to 50x15x10.
+
+![LakeBrite display schematics](http://i.imgur.com/oMijoMz.png)
 
 Each node is capable of being programmed to display 8-bit RGB colors.
 
