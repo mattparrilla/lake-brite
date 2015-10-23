@@ -57,3 +57,5 @@ def get_metric(metric, data=load_all_csvs()):
                 metric_data[metric][station].append(reading)
 
     return metric_data
+
+print get_metric('Temperature')
