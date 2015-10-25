@@ -2,6 +2,7 @@ import numpy as np
 import scipy
 import scipy.interpolate as inter
 import matplotlib.pyplot as plt
+from lake_clip import clip_data_to_lake
 
 
 def extrapolate_nans(x, y, v):
@@ -119,5 +120,5 @@ for i in pts:
     y.append(i[1])
 
 extrapolate_nans(grid_x, grid_y, grid_z)
-plt.matshow(grid_z)
+plt.matshow(clip_data_to_lake(grid_z))
 plt.show()
