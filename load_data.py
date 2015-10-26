@@ -42,28 +42,31 @@ def print_all_values_of_field(field, data=load_all_csvs()):
 
 
 def get_metric(metric, data=load_all_csvs()):
-    """Consumes an array of objects and a desired metric and returns all
-       readings for the given metric organized by station"""
+    """Reads all lake monitoring data, picking out results by metric.
+       Returns an array of measurement objects"""
 
-    metric_data = {metric: {}}
+    metric_data = []
     for measurement in data:
         if measurement['Test'] == metric:
-            station = measurement['Station']
-            reading = {key: measurement[key]
-                for key in ['Depth', 'VisitDate', 'Result']}
-
-            if station not in metric_data[metric]:
-                metric_data[metric][station] = [reading]
-            else:
-                metric_data[metric][station].append(reading)
+            reading = {
+                'Depth': measurement['Depth'],
+                'VisitDate': arrow.get(measurement['VisitDate'],
+                    'M/D/YY').date(),
+                'Result': float(measurement['Result']),
+                'StationID': int(measurement['StationID'])
+            }
+            metric_data.append(reading)
 
     return metric_data
 
-dissolved_p = get_metric('Dissolved Phosphorus')
-for k in dissolved_p:
-    for station in dissolved_p[k]:
-        for reading in dissolved_p[k][station]:
-            date = arrow.get(reading['VisitDate'], 'M/D/YY')
-            if date.year == 2013 and date.month == 7:
-                print station, reading['Result']
-                break
+
+def get_date_sorted_metric(metric):
+    """Return all measurements of a given metric sorted by date"""
+
+    all_measurements = get_metric(metric)
+    date_sorted = sorted(all_measurements, key=lambda r: r['VisitDate'])
+
+    return date_sorted
+
+for i in get_date_sorted_metric('Dissolved Phosphorus'):
+    print i

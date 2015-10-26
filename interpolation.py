@@ -129,7 +129,7 @@ def interpolate_station_data(station_array):
 
 def generate_interpolated_image(data):
     """Takes station data and a 50x10 matrix and returns nicely interpolated
-    results."""
+    results in the shape of Lake Champlain"""
 
     nn = nearest_neighbor(data)
     # plt.matshow(nn)
@@ -151,5 +151,7 @@ def generate_interpolated_image(data):
     plt.matshow(lake_data, cmap=plt.cm.winter)
     plt.colorbar()
     plt.show()
+
+    return lake_data
 
 generate_interpolated_image(data)
