@@ -1,49 +1,7 @@
 import numpy as np
-import scipy
 import scipy.interpolate as inter
 import matplotlib.pyplot as plt
 from lake_clip import clip_data_to_lake
-
-
-# def extrapolate_nans(x, y, v):
-#     """
-#     Extrapolate the NaNs or masked vals in a grid INPLACE using nearest
-#     value.
-# 
-#     .. warning:: Replaces the NaN or masked vals of the original array!
-# 
-#     Parameters:
-# 
-#     * x, y : 1D arrays
-#         Arrays with the x and y coordinates of the data points.
-#     * v : 1D array
-#         Array with the scalar value assigned to the data points.
-# 
-#     Returns:
-# 
-#     * v : 1D array
-#         The array with NaNs or masked vals extrapolated.
-#     """
-# 
-#     # TODO: make the 3rd argument of
-#     if np.ma.is_masked(v):
-#         nans = v.mask
-#     else:
-#         nans = np.isnan(v)
-#     notnans = np.logical_not(nans)
-# 
-#     x_edge_nans = []
-#     y_edge_nans = []
-#     for index, i in enumerate(np.nditer(x[nans])):
-#         j = y[nans][index]
-#         if i == 0. or i == 49. or j == 0. or j == 9.:
-#             x_edge_nans.append(x[nans][index])
-#             y_edge_nans.append(j)
-# 
-#     v[nans][0:81] = scipy.interpolate.griddata((x[notnans], y[notnans]), v[notnans],
-#         (np.array(x_edge_nans), np.array(y_edge_nans)), method='nearest').ravel()
-#     return v
-
 
 data = [
     {
@@ -110,30 +68,88 @@ data = [
 ]
 
 
-# def inpaint_nans(im):
-#     ipn_kernel = np.array([[1,1,1],[1,0,1],[1,1,1]]) # kernel for inpaint_nans
-#     nans = np.isnan(im)
-#     while np.sum(nans)>0:
-#         im[nans] = 0
-#         vNeighbors = scipy.signal.convolve2d((nans==False),ipn_kernel,mode='same',boundary='symm')
-#         im2 = scipy.signal.convolve2d(im,ipn_kernel,mode='same',boundary='symm')
-#         im2[vNeighbors>0] = im2[vNeighbors>0]/vNeighbors[vNeighbors>0]
-#         im2[vNeighbors==0] = np.nan
-#         im2[(nans==False)] = im[(nans==False)]
-#         im = im2
-#         nans = np.isnan(im)
-#     return im
-
-
-def nearest_neighbor(data):
+def nearest_neighbor(station_data):
     """Given lake station data, calculate nearest neighbor for every point
-       in the 2D array of the display. Returns the 2D array"""
-    vals = np.array([station['value'] for station in data])
-    pts = [station['coords'] for station in data]
+       in the 2D array of the display.
+       Returns the 2D array"""
+
+    vals = np.array([station['value'] for station in station_data])
+    pts = [station['coords'] for station in station_data]
     grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
     grid_z = inter.griddata(pts, vals, (grid_x, grid_y), method='nearest')
+
     return grid_z
 
-data = nearest_neighbor(data)
-plt.matshow(data)
-plt.show()
+
+def remove_non_edges(neighbor_data):
+    """Replaces all data in array with nan except for edge nodes, excluding
+       the nodes below 30 nodes of depth in the first column. This is necessary
+       in order to acheive the desired gradient.
+       Returns 2D array of same size."""
+
+    new_array = np.empty((50, 10))
+    new_array[:] = np.NAN
+    new_array[0] = neighbor_data[0]                # first row
+    new_array[-1] = neighbor_data[-1]              # last row
+    new_array[0:30, 0] = neighbor_data[0:30, 0]    # first column
+    new_array[:, -1] = neighbor_data[:, -1]        # last column
+
+    return new_array
+
+
+def reintroduce_station_data(station_data, edge_array):
+    """Takes an array of station data objects and inserts them into a 2D array
+       that contains only values on its edges (from the previous, nearest
+       neighbor calculation.
+       Returns another 2D array"""
+
+    pre_interpolated_array = np.copy(edge_array)
+    for station in station_data:
+        pre_interpolated_array[station['coords'][0],
+            station['coords'][1]] = station['value']
+
+    return pre_interpolated_array
+
+
+def interpolate_station_data(station_array):
+    """Takes a 2D array of station data and edge values (calculated from
+       nearest neighbor) for interpolation.
+       Returns an interpolated 2D array"""
+
+    interpolated_array = np.copy(station_array)
+    nans = np.isnan(interpolated_array)
+    notnans = np.logical_not(nans)
+    grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
+
+    interpolated_array[nans] = inter.griddata((grid_x[notnans], grid_y[notnans]),
+        interpolated_array[notnans], (grid_x[nans], grid_y[nans]), method='cubic')
+
+    return interpolated_array
+
+
+def generate_interpolated_image(data):
+    """Takes station data and a 50x10 matrix and returns nicely interpolated
+    results."""
+
+    nn = nearest_neighbor(data)
+    # plt.matshow(nn)
+    # plt.show()
+
+    just_edges = remove_non_edges(nn)
+    # plt.matshow(just_edges)
+    # plt.show()
+
+    with_stations = reintroduce_station_data(data, just_edges)
+    # plt.matshow(with_stations)
+    # plt.show()
+
+    interpolated = interpolate_station_data(with_stations)
+    # plt.matshow(interpolated, cmap=plt.cm.hot)
+    # plt.show()
+
+    lake_data = clip_data_to_lake(interpolated)
+    plt.matshow(lake_data, cmap=plt.cm.winter)
+    plt.colorbar()
+    plt.show()
+
+generate_interpolated_image(data)
