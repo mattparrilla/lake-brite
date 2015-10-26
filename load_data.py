@@ -1,5 +1,6 @@
 import glob
 import csv
+import arrow
 
 
 def load_all_csvs(directory='data'):
@@ -58,4 +59,11 @@ def get_metric(metric, data=load_all_csvs()):
 
     return metric_data
 
-print get_metric('Temperature')
+dissolved_p = get_metric('Dissolved Phosphorus')
+for k in dissolved_p:
+    for station in dissolved_p[k]:
+        for reading in dissolved_p[k][station]:
+            date = arrow.get(reading['VisitDate'], 'M/D/YY')
+            if date.year == 2013 and date.month == 7:
+                print station, reading['Result']
+                break
