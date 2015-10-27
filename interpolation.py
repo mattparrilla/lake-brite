@@ -57,7 +57,6 @@ def interpolate_station_data(station_array):
     nans = np.isnan(interpolated_array)
     notnans = np.logical_not(nans)
     grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
-    print interpolated_array
 
     interpolated_array[nans] = inter.griddata((grid_x[notnans], grid_y[notnans]),
         interpolated_array[notnans], (grid_x[nans], grid_y[nans]), method='cubic')

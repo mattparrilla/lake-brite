@@ -1,10 +1,10 @@
 from load_data import get_date_sorted_metric, get_max_value
 from interpolation import generate_interpolated_array
 from matrix_to_gif import generate_gif
-import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 
-sample_data = get_date_sorted_metric('Dissolved Phosphorus')
+sample_data = get_date_sorted_metric('Temperature')
 
 # A map of all station IDs to their coordinates on the low-res Lake Champlain
 # image
@@ -71,15 +71,22 @@ station_data = {
     }
 }
 
-max_value = get_max_value(sample_data[:1000])
-matrix = []
-for data in sample_data[:1000]:
-    station_data[data['StationID']]['value'] = data['Result'] / max_value
-    matrix.append(generate_interpolated_array(station_data))
+def map_values_to_colors(x):
+    if np.isnan(x):
+        return [0, 0, 0]
+    elif x < 0:
+        return list(cm.winter(0, bytes=True)[:3])
+    else:
+        return list(cm.winter(x, bytes=True)[:3])
 
-# arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
+vfunc = np.vectorize(map_values_to_colors, otypes=[object])
+
+max_value = get_max_value(sample_data[:100])
 arrays = []
-for array in matrix:
-    arrays.append(array)
+for data in sample_data[:100]:
+    station_data[data['StationID']]['value'] = data['Result'] / max_value
+    array = generate_interpolated_array(station_data)
+    mapped_array = vfunc(array).tolist()
+    arrays.append(np.asarray(mapped_array, 'uint8'))
 
-generate_gif(arrays, 'lake')
+generate_gif(arrays, 'lake-temp')

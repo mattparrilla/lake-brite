@@ -23,6 +23,7 @@ def generate_sample_matrix(n, x=50, y=15, z=10):
                 else:
                     matrix[i][j].append((0, 0, 0))
 
+    print matrix
     return matrix
 
 
@@ -66,10 +67,11 @@ def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
             **frame.info)
 
 
-# matrix = generate_sample_matrix()
+# matrix = generate_sample_matrix(1)
 # images = generate_pil_images(matrix)
 # arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-# gif = generate_gif(arrays, 'array2')
+# print arrays
+# gif = generate_gif(arrays, 'array3')
 # gif = generate_gif(images, 'test2')
 
 # for step in range(1, 51):
