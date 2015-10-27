@@ -53,7 +53,7 @@ def get_metric(metric, data=load_all_csvs()):
                 'VisitDate': arrow.get(measurement['VisitDate'],
                     'M/D/YY').date(),
                 'Result': float(measurement['Result']),
-                'StationID': int(measurement['StationID'])
+                'StationID': int(measurement['StationID']),
             }
             metric_data.append(reading)
 
@@ -68,5 +68,13 @@ def get_date_sorted_metric(metric):
 
     return date_sorted
 
-for i in get_date_sorted_metric('Dissolved Phosphorus'):
-    print i
+
+def get_max_value(data):
+    """Get maximum value of dataset"""
+
+    max_value = 0.
+    for i in data:
+        if float(i['Result']) > max_value:
+            max_value = float(i['Result'])
+
+    return max_value

@@ -77,4 +77,4 @@ def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
 #     arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
 #     gif = generate_gif(arrays, '%03d_pulse' % step)
 
-normal_gif_to_lake_brite('robin.gif')
+# normal_gif_to_lake_brite('robin.gif')

@@ -3,78 +3,14 @@ import scipy.interpolate as inter
 import matplotlib.pyplot as plt
 from lake_clip import clip_data_to_lake
 
-data = [
-    {
-        'station': 51,
-        'coords': [1, 9],
-        'value': 9.3
-    }, {
-        'station': 50,
-        'coords': [2, 7],
-        'value': 13
-    }, {
-        'station': 40,
-        'coords': [10, 8],
-        'value': 18.7
-    }, {
-        'station': 34,
-        'coords': [14, 6],
-        'value': 7.2
-    }, {
-        'station': 46,
-        'coords': [4, 4],
-        'value': 7.5
-    }, {
-        'station': 36,
-        'coords': [11, 2],
-        'value': 10.1
-    }, {
-        'station': 33,
-        'coords': [14, 0],
-        'value': 12.4
-    }, {
-        'station': 25,
-        'coords': [17, 4],
-        'value': 8.1
-    }, {
-        'station': 19,
-        'coords': [21, 3],
-        'value': 6.5
-    }, {
-        'station': 21,
-        'coords': [21, 5],
-        'value': 6.5
-    }, {
-        'station': 16,
-        'coords': [23, 6],
-        'value': 8.7
-    }, {
-        'station': 9,
-        'coords': [30, 3],
-        'value': 9.4
-    }, {
-        'station': 7,
-        'coords': [34, 0],
-        'value': 6.5
-    }, {
-        'station': 4,
-        'coords': [40, 0],
-        'value': 28
-    }, {
-        'station': 2,
-        'coords': [48, 0],
-        'value': 13.1
-    }
-]
-
 
 def nearest_neighbor(station_data):
     """Given lake station data, calculate nearest neighbor for every point
        in the 2D array of the display.
        Returns the 2D array"""
 
-    vals = np.array([station['value'] for station in station_data])
-    pts = [station['coords'] for station in station_data]
+    vals = np.array([station_data[station]['value'] for station in station_data])
+    pts = [station_data[station]['location'] for station in station_data]
     grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
     grid_z = inter.griddata(pts, vals, (grid_x, grid_y), method='nearest')
 
@@ -105,8 +41,9 @@ def reintroduce_station_data(station_data, edge_array):
 
     pre_interpolated_array = np.copy(edge_array)
     for station in station_data:
-        pre_interpolated_array[station['coords'][0],
-            station['coords'][1]] = station['value']
+        data = station_data[station]
+        pre_interpolated_array[data['location'][0],
+            data['location'][1]] = data['value']
 
     return pre_interpolated_array
 
@@ -120,6 +57,7 @@ def interpolate_station_data(station_array):
     nans = np.isnan(interpolated_array)
     notnans = np.logical_not(nans)
     grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
+    print interpolated_array
 
     interpolated_array[nans] = inter.griddata((grid_x[notnans], grid_y[notnans]),
         interpolated_array[notnans], (grid_x[nans], grid_y[nans]), method='cubic')
@@ -127,7 +65,7 @@ def interpolate_station_data(station_array):
     return interpolated_array
 
 
-def generate_interpolated_image(data):
+def generate_interpolated_array(data):
     """Takes station data and a 50x10 matrix and returns nicely interpolated
     results in the shape of Lake Champlain"""
 
@@ -145,13 +83,12 @@ def generate_interpolated_image(data):
 
     interpolated = interpolate_station_data(with_stations)
     # plt.matshow(interpolated, cmap=plt.cm.hot)
+    # plt.colorbar()
     # plt.show()
 
     lake_data = clip_data_to_lake(interpolated)
-    plt.matshow(lake_data, cmap=plt.cm.winter)
-    plt.colorbar()
-    plt.show()
+    # plt.matshow(lake_data, cmap=plt.cm.winter)
+    # plt.colorbar()
+    # plt.show()
 
     return lake_data
-
-generate_interpolated_image(data)
