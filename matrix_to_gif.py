@@ -23,7 +23,6 @@ def generate_sample_matrix(n, x=50, y=15, z=10):
                 else:
                     matrix[i][j].append((0, 0, 0))
 
-    print matrix
     return matrix
 
 
@@ -33,7 +32,7 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, directory='gif', duration=0.125):
+def generate_gif(images, name, directory='gif', duration=0.01):
     """Creates a gif from a list of PIL images"""
 
     gif_name = "%s/%s.gif" % (directory, name)

@@ -4,8 +4,6 @@ from matrix_to_gif import generate_gif
 from matplotlib import cm
 import numpy as np
 
-sample_data = get_date_sorted_metric('Temperature')
-
 # A map of all station IDs to their coordinates on the low-res Lake Champlain
 # image
 station_data = {
@@ -71,22 +69,47 @@ station_data = {
     }
 }
 
+
 def map_values_to_colors(x):
+    """To be consumed by np.vectorize to transform nan values to black
+       and provide the color map"""
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
-        return list(cm.winter(0, bytes=True)[:3])
+        return list(cm.jet(0, bytes=True)[:3])
     else:
-        return list(cm.winter(x, bytes=True)[:3])
+        return list(cm.jet(x, bytes=True)[:3])
 
-vfunc = np.vectorize(map_values_to_colors, otypes=[object])
 
-max_value = get_max_value(sample_data[:100])
-arrays = []
-for data in sample_data[:100]:
-    station_data[data['StationID']]['value'] = data['Result'] / max_value
-    array = generate_interpolated_array(station_data)
-    mapped_array = vfunc(array).tolist()
-    arrays.append(np.asarray(mapped_array, 'uint8'))
+def generate_lake_gif(metric):
+    """Generate a GIF of Lake Champlain, displaying how a metric has changed
+       over the course of the long term lake monitoring program"""
 
-generate_gif(arrays, 'lake-temp')
+    lake_data = get_date_sorted_metric(metric)
+
+    vfunc = np.vectorize(map_values_to_colors, otypes=[object])
+    max_value = get_max_value(lake_data)
+
+    arrays = []
+    for data in lake_data:
+        station_data[data['StationID']]['value'] = data['Result'] / max_value
+        array = generate_interpolated_array(station_data)
+        mapped_list = vfunc(array).tolist()  # BAD: array -> list -> array
+        arrays.append(np.asarray(mapped_list, 'uint8'))
+
+    return generate_gif(arrays, metric.replace(' ', '-').lower())
+
+metrics = [
+    'Chloride',
+    'Chlorophyll-a',
+    'Secchi Depth',
+    'Total Phosphorus',
+    'Alkalinity',
+    'Temperature',
+    'Total Nitrogen',
+    'Dissolved Oxygen'
+]
+
+for metric in metrics:
+    print "Starting to generate: %s" % metric
+    generate_lake_gif(metric)
