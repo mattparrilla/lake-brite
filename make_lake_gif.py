@@ -64,9 +64,9 @@ def map_values_to_colors(x):
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
-        return list(cm.jet(0, bytes=True)[:3])
+        return list(cm.winter(0, bytes=True)[:3])
     else:
-        return list(cm.jet(x, bytes=True)[:3])
+        return list(cm.winter(x, bytes=True)[:3])
 
 
 def generate_lake_gif(metric):
