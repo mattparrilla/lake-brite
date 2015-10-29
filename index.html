@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+
+<head>
+<title>Lake Champlain GIFs</title>
+<link href='http://fonts.googleapis.com/css?family=Roboto:500,600,300,100' rel='stylesheet' type='text/css'>
+<meta name="viewport" content="width=960">
+<style>
+    body {
+        background-color: black;
+        text-align: center;
+        color: white;
+        font-family: Roboto, sans-serif
+    }
+    h1 {
+        font-weight: 100;
+        font-size: 58px;
+        margin-bottom: 50px;
+    }
+    img {
+        height: 250px;
+        width: 50px;
+    }
+    .gifs {
+        display: block;
+        padding-left: 10px;
+    }
+    .lake-gif {
+        position: relative;
+        width: 100px;
+        display: inline-block;
+    }
+    .gif-label {
+        position: absolute;
+        height: 250px;
+        width: 250px;
+        font-weight: 500;
+        color: #ccc;
+        left: -5px;
+        transform: rotate(-90deg);
+        transform-origin: right, top;
+        -ms-transform: rotate(-90deg);
+        -ms-transform-origin:right, top;
+        -webkit-transform: rotate(-90deg);
+        -webkit-transform-origin:right, top;
+    }
+    .explanation {
+        text-align: left;
+        font-weight: 100;
+        font-size: 18px;
+        width: 800px;
+        display: block;
+        margin: 40px auto;
+        color: #ddd;
+    }
+    a {
+        color: #aaa;
+    }
+    .by-matt {
+        font-size: 12px;
+    }
+</style>
+</head>
+
+
+<body>
+
+<h1>Lake Champlain Small Multiples</h1>
+<div class="gifs">
+    <div class="lake-gif">
+        <p class="gif-label">Alkalinity</p>
+        <img src="gif/champlain/alkalinity.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Chloride</p>
+        <img src="gif/champlain/chloride.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Chlorophyl-a</p>
+        <img src="gif/champlain/chlorophyll-a.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Dissolved Oxygen</p>
+        <img src="gif/champlain/dissolved-oxygen.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Secchi Depth</p>
+        <img src="gif/champlain/secchi-depth.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Temperature</p>
+        <img src="gif/champlain/temperature.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Total Nitrogen</p>
+        <img src="gif/champlain/total-nitrogen.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Total Phosphorus</p>
+        <img src="gif/champlain/total-phosphorus.gif" />
+    </div>
+</div>
+
+<div class="explanation">
+    <p>The above is a prototype of an in-progress visualization on Lake Champlain. Each image is an animated GIF of readings from the 15 monitoring stations of the <a href="https://anrweb.vermont.gov/dec/dec/LongTermMonitoringLakes.aspx">Long Term Lake Monitoring Program</a>. The program has been gathering data continuously since 1992.</p>
+    <p>Each frame represents a month of data. The values have been interpolated throughout the lake from the 15 stations.</p>
+    <p>Please excuse the lack of a key. As mentioned, it's a work in progress!</p>
+    <p class="by-matt">Made by <a href="//www.matthewparrilla.com">Matthew Parrilla</a></p>
+</div>
+
+
+
+</body>
+
+</html>
