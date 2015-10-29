@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.interpolate as inter
-import matplotlib.pyplot as plt
 from lake_clip import clip_data_to_lake
 
 
@@ -9,10 +8,15 @@ def nearest_neighbor(station_data):
        in the 2D array of the display.
        Returns the 2D array"""
 
-    vals = np.array([station_data[station]['value'] for station in station_data])
-    pts = [station_data[station]['location'] for station in station_data]
+    vals = []
+    points = []
+    for station in station_data:
+        if 'value' in station_data[station]:
+            vals.append(station_data[station]['value'])
+            points.append(station_data[station]['location'])
+    values = np.asarray(vals)
     grid_x, grid_y = np.mgrid[0:49:50j, 0:9:10j]
-    grid_z = inter.griddata(pts, vals, (grid_x, grid_y), method='nearest')
+    grid_z = inter.griddata(points, values, (grid_x, grid_y), method='nearest')
 
     return grid_z
 
@@ -42,8 +46,9 @@ def reintroduce_station_data(station_data, edge_array):
     pre_interpolated_array = np.copy(edge_array)
     for station in station_data:
         data = station_data[station]
-        pre_interpolated_array[data['location'][0],
-            data['location'][1]] = data['value']
+        if 'value' in data:
+            pre_interpolated_array[data['location'][0],
+                data['location'][1]] = data['value']
 
     return pre_interpolated_array
 

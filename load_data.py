@@ -93,8 +93,7 @@ def get_metric(metric, max_depth=3, data=load_all_csvs()):
                     }
                     metric_data.append(reading)
             except ValueError:
-                print 'Error'
-                print measurement
+                pass
 
     return metric_data
 
@@ -108,9 +107,10 @@ def get_date_sorted_metric(metric):
     return date_sorted
 
 
-def get_max_value(data):
+def get_max_value(metric):
     """Get maximum value of dataset"""
 
+    data = get_metric(metric)
     max_value = 0.
     for i in data:
         if float(i['Result']) > max_value:
@@ -119,22 +119,43 @@ def get_max_value(data):
     return max_value
 
 
-def group_by_month(metric):
-    """Takes dataset by metric, groups measurements by month.
-       Returns: [{
-        'month': 1,
-        'year': 2002,
-        'data': [2.7, 2.3],
-        'Result': 2.5,
-        'StationID': 51
-       }]"""
+def group_metric_data_by_month(metric):
+    """Takes dataset by metric, groups measurements by year, then month,
+       then station.
+        {
+            1992: {
+                5: {
+                    33: [10.5, 8.7],
+                    34: [9.1],
+                    36: [8.7],
+                    7: [6.7, 9.2],
+                }, ...
+       """
 
     all_measurements = get_metric(metric)
 
     results = {}
     for reading in all_measurements:
-        year = reading['VisitDate'].year()
-        month = reading['VisitDate'].month()
+        year = reading['VisitDate'].year
+        month = reading['VisitDate'].month
         station = reading['StationID']
         value = reading['Result']
 
+        if year not in results:
+            results[year] = {}
+            for i in range(13)[1:]:
+                results[year][i] = {}
+
+            results[year][month] = {
+                station: [value]
+            }
+        elif month not in results[year]:
+            results[year][month] = {
+                station: [value]
+            }
+        elif station not in results[year][month]:
+            results[year][month][station] = [value]
+        else:
+            results[year][month][station].append(value)
+
+    return results

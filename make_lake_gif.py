@@ -1,73 +1,61 @@
-from load_data import get_date_sorted_metric, get_max_value
+from load_data import group_metric_data_by_month, get_max_value
 from interpolation import generate_interpolated_array
 from matrix_to_gif import generate_gif
 from matplotlib import cm
 import numpy as np
 
-# A map of all station IDs to their coordinates on the low-res Lake Champlain
-# image
-station_data = {
-    51: {
-        'value': 0,
-        'location': [1, 9],
-    },
-    50: {
-        'value': 0,
-        'location': [2, 7],
-    },
-    40: {
-        'value': 0,
-        'location': [10, 8],
-    },
-    34: {
-        'value': 0,
-        'location': [14, 6],
-    },
-    46: {
-        'value': 0,
-        'location': [4, 4],
-    },
-    36: {
-        'value': 0,
-        'location': [11, 2],
-    },
-    33: {
-        'value': 0,
-        'location': [14, 0],
-    },
-    25: {
-        'value': 0,
-        'location': [17, 4],
-    },
-    19: {
-        'value': 0,
-        'location': [21, 3],
-    },
-    21: {
-        'value': 0,
-        'location': [21, 5],
-    },
-    16: {
-        'value': 0,
-        'location': [23, 6],
-    },
-    9: {
-        'value': 0,
-        'location': [30, 3],
-    },
-    7: {
-        'value': 0,
-        'location': [34, 0],
-    },
-    4: {
-        'value': 0,
-        'location': [40, 0],
-    },
-    2: {
-        'value': 0,
-        'location': [48, 0],
+
+def station_map():
+    """A map of all station IDs to their coordinates on the low-res
+       Lake Champlain image """
+
+    return {
+        51: {
+            'location': [1, 9],
+        },
+        50: {
+            'location': [2, 7],
+        },
+        40: {
+            'location': [10, 8],
+        },
+        34: {
+            'location': [14, 6],
+        },
+        46: {
+            'location': [4, 4],
+        },
+        36: {
+            'location': [11, 2],
+        },
+        33: {
+            'location': [14, 0],
+        },
+        25: {
+            'location': [17, 4],
+        },
+        19: {
+            'location': [21, 3],
+        },
+        21: {
+            'location': [21, 5],
+        },
+        16: {
+            'location': [23, 6],
+        },
+        9: {
+            'location': [30, 3],
+        },
+        7: {
+            'location': [34, 0],
+        },
+        4: {
+            'location': [40, 0],
+        },
+        2: {
+            'location': [48, 0],
+        }
     }
-}
 
 
 def map_values_to_colors(x):
@@ -85,17 +73,25 @@ def generate_lake_gif(metric):
     """Generate a GIF of Lake Champlain, displaying how a metric has changed
        over the course of the long term lake monitoring program"""
 
-    lake_data = get_date_sorted_metric(metric)
+    lake_data = group_metric_data_by_month(metric)
 
     vfunc = np.vectorize(map_values_to_colors, otypes=[object])
-    max_value = get_max_value(lake_data)
+    max_value = get_max_value(metric)
 
     arrays = []
-    for data in lake_data:
-        station_data[data['StationID']]['value'] = data['Result'] / max_value
-        array = generate_interpolated_array(station_data)
-        mapped_list = vfunc(array).tolist()  # BAD: array -> list -> array
-        arrays.append(np.asarray(mapped_list, 'uint8'))
+    for year in lake_data:
+        for month in lake_data[year]:
+            station_data = station_map()
+            if not lake_data[year][month]:  # if month contains no data
+                station_data[4]['value'] = 0  # show 0 for whole lake for month
+            else:
+                for station in lake_data[year][month]:
+                    data = lake_data[year][month][station]
+                    monthly_value = sum(data) / len(data)
+                    station_data[station]['value'] = monthly_value / max_value
+            array = generate_interpolated_array(station_data)
+            mapped_list = vfunc(array).tolist()  # BAD: array -> list -> array
+            arrays.append(np.asarray(mapped_list, 'uint8'))
 
     return generate_gif(arrays, metric.replace(' ', '-').lower())
 
