@@ -79,8 +79,9 @@ def generate_lake_gif(metric):
     max_value = get_max_value(metric)
 
     arrays = []
-    for year in lake_data:
-        for month in lake_data[year]:
+    # TODO: the order of this stuff is not guaranteed, it's a dict!
+    for year in range(1995, 2015):
+        for month in range(1, 13):
             station_data = station_map()
             if not lake_data[year][month]:  # if month contains no data
                 station_data[4]['value'] = 0  # show 0 for whole lake for month

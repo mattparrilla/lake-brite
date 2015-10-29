@@ -32,7 +32,7 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, directory='gif/champlain', duration=.5):
+def generate_gif(images, name, directory='pages-static/img', duration=.5):
     """Creates a gif from a list of PIL images"""
 
     gif_name = "%s/%s.gif" % (directory, name)
@@ -40,7 +40,7 @@ def generate_gif(images, name, directory='gif/champlain', duration=.5):
     return gif_name
 
 
-def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
+def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
     """Take a normal, animated GIF and allow it to display on lake brite"""
 
     def iter_frames(gif):

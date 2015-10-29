@@ -143,7 +143,7 @@ def group_metric_data_by_month(metric):
 
         if year not in results:
             results[year] = {}
-            for i in range(13)[1:]:
+            for i in range(1, 13):
                 results[year][i] = {}
 
             results[year][month] = {
