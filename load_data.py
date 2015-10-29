@@ -3,7 +3,7 @@ import csv
 import arrow
 
 
-def load_all_csvs(directory='data'):
+def load_all_csvs(directory='data/long-term-lake-monitoring'):
     """Takes a directory and loads all CSVs in the directory into memory
        as an array of objects. The objects from the 'data' dir look like:
        {
