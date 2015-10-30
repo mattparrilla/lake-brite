@@ -4,6 +4,17 @@ from matrix_to_gif import generate_gif
 from matplotlib import cm
 import numpy as np
 
+metrics = [
+    'Chloride',
+    'Chlorophyll-a',
+    'Secchi Depth',
+    'Total Phosphorus',
+    'Alkalinity',
+    'Temperature',
+    'Total Nitrogen',
+    'Dissolved Oxygen'
+]
+
 
 def station_map():
     """A map of all station IDs to their coordinates on the low-res
@@ -69,9 +80,9 @@ def map_values_to_colors(x):
         return list(cm.winter(x, bytes=True)[:3])
 
 
-def generate_lake_gif(metric):
-    """Generate a GIF of Lake Champlain, displaying how a metric has changed
-       over the course of the long term lake monitoring program"""
+def generate_lake_array(metric):
+    """Generate an array of Lake Champlain metric data, for creation of 2D
+       and 3D GIFs"""
 
     lake_data = group_metric_data_by_month(metric)
 
@@ -79,7 +90,6 @@ def generate_lake_gif(metric):
     max_value = get_max_value(metric)
 
     arrays = []
-    # TODO: the order of this stuff is not guaranteed, it's a dict!
     for year in range(1995, 2015):
         for month in range(1, 13):
             station_data = station_map()
@@ -92,21 +102,40 @@ def generate_lake_gif(metric):
                     station_data[station]['value'] = monthly_value / max_value
             array = generate_interpolated_array(station_data)
             mapped_list = vfunc(array).tolist()  # BAD: array -> list -> array
-            arrays.append(np.asarray(mapped_list, 'uint8'))
+            arrays.append(mapped_list)
 
-    return generate_gif(arrays, metric.replace(' ', '-').lower())
+    return arrays
 
-metrics = [
-    'Chloride',
-    'Chlorophyll-a',
-    'Secchi Depth',
-    'Total Phosphorus',
-    'Alkalinity',
-    'Temperature',
-    'Total Nitrogen',
-    'Dissolved Oxygen'
-]
 
-for metric in metrics:
-    print "Starting to generate: %s" % metric
-    generate_lake_gif(metric)
+def generate_lake_gif(metric):
+    """Generate a GIF of Lake Champlain, displaying how a metric has changed
+       over the course of the long term lake monitoring program"""
+
+    a = generate_lake_array(metric)
+    arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
+    generate_gif(arrays, '2D-lake/%s' % metric.replace(' ', '-').lower())
+
+
+def generate_lake_gifs(metrics=metrics):
+    """Generate 2D Lake GIFs for defined metrics"""
+
+    for metric in metrics:
+        print "Starting to generate: %s" % metric
+        generate_lake_gif(metric)
+
+
+# TODO: Each frame is only 1D, it needs to be 2D, colored appropriately
+# and its height should reflect its metric value
+def generate_lake_brite_gifs(metric):
+    """Generate 3D Lake GIFs for consumption by LakeBrite"""
+
+    a = generate_lake_array(metric)
+
+    for index, frame in enumerate(a):
+        arrays = [np.asarray(frame[i], 'uint8')
+            for i, f in enumerate(frame)]
+
+        generate_gif(arrays, '3D-lake/%03d_%s' % (index,
+            metric.replace(' ', '-').lower()))
+
+generate_lake_brite_gifs('Temperature')
