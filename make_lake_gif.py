@@ -4,7 +4,10 @@ from matrix_to_gif import generate_gif
 from matplotlib import cm
 import numpy as np
 
-metrics = [
+YEARS = range(1995, 2015)
+MONTHS = range(1, 13)
+
+METRICS = [
     'Chloride',
     'Chlorophyll-a',
     'Secchi Depth',
@@ -81,15 +84,14 @@ def map_values_to_colors(x):
 
 
 def generate_lake_array(metric):
-    """Generate an array of Lake Champlain metric data, for creation of 2D
+    """Generate an array of raw Lake Champlain metric data, for creation of 2D
        and 3D GIFs"""
 
     lake_data = group_metric_data_by_month(metric)
-    max_value = get_max_value(metric)
 
     arrays = []
-    for year in range(1995, 2015):
-        for month in range(1, 13):
+    for year in YEARS:
+        for month in MONTHS:
             station_data = station_map()
             if not lake_data[year][month]:  # if month contains no data
                 station_data[4]['value'] = 0  # show 0 for whole lake for month
@@ -97,11 +99,24 @@ def generate_lake_array(metric):
                 for station in lake_data[year][month]:
                     data = lake_data[year][month][station]
                     monthly_value = sum(data) / len(data)
-                    station_data[station]['value'] = monthly_value / max_value
+                    station_data[station]['value'] = monthly_value
             array = generate_interpolated_array(station_data)
-            arrays.append(array)
+            arrays.append(array.tolist())
 
     return arrays
+
+
+# TODO: probably need min value as well, otherwise scaling from max to zero
+def normalize_values(data, max_value):
+    """Normalize values to 0 -> 1"""
+
+    for i, x in enumerate(data):
+        for j, y in enumerate(x):
+            for k, z in enumerate(y):
+                value = data[i][j][k]
+                data[i][j][k] = value / max_value
+
+    return data
 
 
 def map_value_to_color(a):
@@ -119,13 +134,16 @@ def generate_lake_gif(metric):
     """Generate a GIF of Lake Champlain, displaying how a metric has changed
        over the course of the long term lake monitoring program"""
 
+    max_value = get_max_value(metric)
+
     data = generate_lake_array(metric)
-    a = map_value_to_color(data)
+    normalized = normalize_values(data, max_value)
+    a = map_value_to_color(normalized)
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
     generate_gif(arrays, '2D-lake/%s' % metric.replace(' ', '-').lower())
 
 
-def generate_lake_gifs(metrics=metrics):
+def generate_lake_gifs(metrics=METRICS):
     """Generate 2D Lake GIFs for defined metrics"""
 
     for metric in metrics:
