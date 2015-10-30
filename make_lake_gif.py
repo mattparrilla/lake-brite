@@ -85,8 +85,6 @@ def generate_lake_array(metric):
        and 3D GIFs"""
 
     lake_data = group_metric_data_by_month(metric)
-
-    vfunc = np.vectorize(map_values_to_colors, otypes=[object])
     max_value = get_max_value(metric)
 
     arrays = []
@@ -101,8 +99,18 @@ def generate_lake_array(metric):
                     monthly_value = sum(data) / len(data)
                     station_data[station]['value'] = monthly_value / max_value
             array = generate_interpolated_array(station_data)
-            mapped_list = vfunc(array).tolist()  # BAD: array -> list -> array
-            arrays.append(mapped_list)
+            arrays.append(array)
+
+    return arrays
+
+
+def map_value_to_color(a):
+    vfunc = np.vectorize(map_values_to_colors, otypes=[object])
+
+    arrays = []
+    for array in a:
+        mapped_list = vfunc(array).tolist()
+        arrays.append(mapped_list)
 
     return arrays
 
@@ -111,7 +119,8 @@ def generate_lake_gif(metric):
     """Generate a GIF of Lake Champlain, displaying how a metric has changed
        over the course of the long term lake monitoring program"""
 
-    a = generate_lake_array(metric)
+    data = generate_lake_array(metric)
+    a = map_value_to_color(data)
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
     generate_gif(arrays, '2D-lake/%s' % metric.replace(' ', '-').lower())
 
@@ -134,10 +143,13 @@ def generate_lake_brite_gifs(metric):
     a = generate_lake_array(metric)
 
     for index, frame in enumerate(a):
-        arrays = [np.asarray(frame[i], 'uint8')
-            for i, f in enumerate(frame)]
+        print frame
 
-        generate_gif(arrays, '3D-lake/%03d_%s' % (index,
-            metric.replace(' ', '-').lower()))
+        # arrays = [np.asarray(frame[i], 'uint8')
+        #     for i, f in enumerate(frame)]
 
-generate_lake_brite_gifs('Temperature')
+        # generate_gif(arrays, '3D-lake/%03d_%s' % (index,
+        #     metric.replace(' ', '-').lower()))
+
+# generate_lake_brite_gifs('Temperature')
+generate_lake_gifs(['Temperature'])
