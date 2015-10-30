@@ -152,7 +152,7 @@ def color_map(value, max_temp, min_temp):
     """Take a reading and map it to a color"""
 
     if np.isnan(value):
-        return (0, 0, 0)
+        return (125, 100, 100)
     elif value > 32:
         return (255 - 2 * (max_temp - value), 0, max_temp - value)
     elif value <= 32:
@@ -183,3 +183,5 @@ def make_temp_gif():
     matrix = assign_colors()
     arrays = [np.asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
     generate_gif(arrays, 'temp')
+
+make_temp_gif()

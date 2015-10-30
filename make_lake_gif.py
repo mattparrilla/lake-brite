@@ -5,7 +5,7 @@ from matplotlib import cm
 import numpy as np
 
 YEARS = range(1995, 2015)
-MONTHS = range(1, 13)
+MONTHS = range(5, 10)
 
 METRICS = [
     'Chloride',
@@ -78,9 +78,9 @@ def map_values_to_colors(x):
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
-        return list(cm.winter(0, bytes=True)[:3])
+        return list(cm.hot(0, bytes=True)[:3])
     else:
-        return list(cm.winter(x, bytes=True)[:3])
+        return list(cm.hot(x, bytes=True)[:3])
 
 max_value = 0
 min_value = 10000
@@ -235,8 +235,6 @@ def generate_lake_brite_gifs(metric):
     a = generate_lake_array(metric)
     max_value = get_max_of_data(a)
     min_value = get_min_of_data(a)
-    print max_value
-    print min_value
 
     rotated = []
     for index, frame in enumerate(a):

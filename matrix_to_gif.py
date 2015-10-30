@@ -66,11 +66,11 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
             **frame.info)
 
 
-matrix = generate_sample_matrix(1)
-# images = generate_pil_images(matrix)
-arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-# print arrays
-gif = generate_gif(arrays, 'array4')
+# matrix = generate_sample_matrix(1)
+# # images = generate_pil_images(matrix)
+# arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
+# # print arrays
+# gif = generate_gif(arrays, 'array4')
 # gif = generate_gif(images, 'test2')
 
 # for step in range(1, 51):
