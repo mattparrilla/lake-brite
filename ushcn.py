@@ -121,9 +121,13 @@ def increase_dimensions(data=csv_to_matrix()):
     for year in data:
         year_frame = new_array()
         for reading_index, reading in enumerate(year):
-            bin_number = -which_bin(reading, max_temp, min_temp)
-            for i in range(bin_number, 0):
-                year_frame[i][reading_index] = reading
+            if not np.isnan(reading):
+                bin_number = -which_bin(reading, max_temp, min_temp)
+                for i in range(bin_number, 0):
+                    try:
+                        year_frame[i][reading_index] = reading
+                    except IndexError:
+                        reading
 
         all_years.append(year_frame)
 
@@ -149,13 +153,32 @@ def color_map(value, max_temp, min_temp):
     if np.isnan(value):
         return (0, 0, 0)
     elif value > 32:
-        return (255 - (max_temp - value), 0, 0)
-    elif value < 32:
-        return (0, 0, 255 - (value - min_temp))
+        return (255 - 2 * (max_temp - value), 0, max_temp - value)
+    elif value <= 32:
+        return (0, 0, 255 - 4 * (value - min_temp))
     else:
         return (0, 0, 0)
 
-matrix = assign_colors()
-print matrix
-arrays = [np.asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-gif = generate_gif(arrays, 'temp')
+
+def make_three_d_gifs():
+    """Turn temperature dataset into 3d GIFs for LakeBrite"""
+    matrix = assign_colors()
+    length = len(matrix)
+    for index, frame in enumerate(matrix):
+        single_frame = []
+        if index < length - 10:
+            single_frame = matrix[index:index + 10]
+        else:
+            single_frame = matrix[index:]
+
+        arrays = [np.asarray(single_frame[i], 'uint8')
+            for i, f in enumerate(single_frame)]
+
+        generate_gif(arrays, 'temperature/%03d_temp' % index)
+
+
+def make_temp_gif():
+    """A single GIF of the entire temperature dataset"""
+    matrix = assign_colors()
+    arrays = [np.asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
+    generate_gif(arrays, 'temp')
