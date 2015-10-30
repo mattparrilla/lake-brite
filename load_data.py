@@ -119,6 +119,18 @@ def get_max_value(metric):
     return max_value
 
 
+def get_min_value(metric):
+    """Get minimum value of dataset"""
+
+    data = get_metric(metric)
+    min_value = 1000000.
+    for i in data:
+        if float(i['Result']) < min_value:
+            min_value = float(i['Result'])
+
+    return min_value
+
+
 def group_metric_data_by_month(metric):
     """Takes dataset by metric, groups measurements by year, then month,
        then station.

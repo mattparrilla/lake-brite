@@ -82,6 +82,9 @@ def map_values_to_colors(x):
     else:
         return list(cm.winter(x, bytes=True)[:3])
 
+max_value = 0
+min_value = 10000
+
 
 def generate_lake_array(metric):
     """Generate an array of raw Lake Champlain metric data, for creation of 2D
@@ -107,14 +110,18 @@ def generate_lake_array(metric):
 
 
 # TODO: probably need min value as well, otherwise scaling from max to zero
-def normalize_values(data, max_value):
+def normalize_values(array, max_value):
     """Normalize values to 0 -> 1"""
 
+    data = array
     for i, x in enumerate(data):
         for j, y in enumerate(x):
             for k, z in enumerate(y):
                 value = data[i][j][k]
-                data[i][j][k] = value / max_value
+                if max_value:
+                    data[i][j][k] = value / max_value
+                else:
+                    data[i][j][k] = value
 
     return data
 
@@ -151,6 +158,73 @@ def generate_lake_gifs(metrics=METRICS):
         generate_lake_gif(metric)
 
 
+def which_bin(reading, maximum=max_value, minimum=min_value, bins=15):
+    """Given a reading and a number of bins, determine which bin a value
+       belongs to"""
+
+    diff = maximum - minimum
+    bin_width = diff / (bins - 1)
+    value = reading - minimum
+    if bin_width:
+        bin_index = value / bin_width
+    else:
+        bin_index = 0
+
+    return int(bin_index)
+
+
+def new_array():
+    array = []
+    for i in range(15):
+        array.append([])
+        for j in range(50):
+            array[i].append(np.nan)
+    return array
+
+
+def increase_dimensions(data, max_value, min_value):
+    """Changes a list of 1-D array into a array of 2-D array. The input array is
+       48 items long (representing the longest axis of LakeBrite). The 2D array
+       will be 15 array of 48 items, the 15 array representing vertical slices
+       of LakeBrite."""
+
+    frames = []
+    for row in data:
+        lake_brite_frame = new_array()
+        for reading_index, reading in enumerate(row):
+            if not np.isnan(reading):
+                bin_number = -which_bin(reading, max_value, min_value)
+                for i in range(bin_number, 0):
+                    try:
+                        lake_brite_frame[i][reading_index] = reading
+                    except IndexError:
+                        reading
+
+        frames.append(lake_brite_frame)
+
+    return frames
+
+
+def get_max_of_data(data):
+    max_value = 0
+    for i in data:
+        for j in i:
+            for k in j:
+                if k > max_value:
+                    max_value = k
+    return max_value
+
+
+def get_min_of_data(data):
+    min_value = 10000
+    for i in data:
+        for j in i:
+            for k in j:
+                if k < min_value:
+                    min_value = k
+    return min_value
+
+
 # TODO: Each frame is only 1D, it needs to be 2D, colored appropriately
 # and its height should reflect its metric value
 
@@ -159,15 +233,24 @@ def generate_lake_brite_gifs(metric):
     """Generate 3D Lake GIFs for consumption by LakeBrite"""
 
     a = generate_lake_array(metric)
+    max_value = get_max_of_data(a)
+    min_value = get_min_of_data(a)
+    print max_value
+    print min_value
 
+    rotated = []
     for index, frame in enumerate(a):
-        print frame
+        rotated.append(zip(*frame))
 
-        # arrays = [np.asarray(frame[i], 'uint8')
-        #     for i, f in enumerate(frame)]
+    lake_brite_frames = [increase_dimensions(frame, max_value, min_value) for
+        frame in rotated]
 
-        # generate_gif(arrays, '3D-lake/%03d_%s' % (index,
-        #     metric.replace(' ', '-').lower()))
+    normalized = [normalize_values(frame, max_value) for frame in lake_brite_frames]
+    a = map_value_to_color(normalized)
+    arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
+    for index, array in enumerate(arrays):
+        generate_gif(array, '3D-lake/%05d%s' % (
+            index, metric.replace(' ', '-').lower()))
 
-# generate_lake_brite_gifs('Temperature')
-generate_lake_gifs(['Temperature'])
+generate_lake_brite_gifs('Temperature')
+# generate_lake_gif('Temperature')
