@@ -126,6 +126,8 @@ def generate_lake_gifs(metrics=metrics):
 
 # TODO: Each frame is only 1D, it needs to be 2D, colored appropriately
 # and its height should reflect its metric value
+
+# TODO: rotate arrays for lake brite
 def generate_lake_brite_gifs(metric):
     """Generate 3D Lake GIFs for consumption by LakeBrite"""
 

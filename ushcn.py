@@ -108,6 +108,7 @@ def new_array():
     return array
 
 
+# TODO: consider rotating array here
 def increase_dimensions(data=csv_to_matrix()):
     """Changes a list of 1-D array into a array of 2-D array. The input array is
        48 items long (representing the longest axis of LakeBrite). The 2D array
