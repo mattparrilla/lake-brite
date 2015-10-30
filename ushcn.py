@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+from matrix_to_gif import generate_gif
 
 
 def csv_to_matrix(csv_filename='data/ushcn/btv_max_temp.csv'):
@@ -107,7 +108,7 @@ def new_array():
     return array
 
 
-def increase_dimensions(data=csv_to_matrix()[1:2]):
+def increase_dimensions(data=csv_to_matrix()):
     """Changes a list of 1-D array into a array of 2-D array. The input array is
        48 items long (representing the longest axis of LakeBrite). The 2D array
        will be 15 array of 48 items, the 15 array representing vertical slices
@@ -126,6 +127,35 @@ def increase_dimensions(data=csv_to_matrix()[1:2]):
 
         all_years.append(year_frame)
 
-    return all_years
+    return all_years, max_temp, min_temp
 
-print increase_dimensions()
+
+def assign_colors():
+    """Convert temperature values to RGB colors"""
+
+    data, max_temp, min_temp = increase_dimensions()
+
+    for i, year in enumerate(data):
+        for j, row in enumerate(year):
+            for k, item in enumerate(row):
+                data[i][j][k] = color_map(item, max_temp, min_temp)
+
+    return data
+
+
+def color_map(value, max_temp, min_temp):
+    """Take a reading and map it to a color"""
+
+    if np.isnan(value):
+        return (0, 0, 0)
+    elif value > 32:
+        return (255 - (max_temp - value), 0, 0)
+    elif value < 32:
+        return (0, 0, 255 - (value - min_temp))
+    else:
+        return (0, 0, 0)
+
+matrix = assign_colors()
+print matrix
+arrays = [np.asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
+gif = generate_gif(arrays, 'temp')
