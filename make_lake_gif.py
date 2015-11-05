@@ -5,7 +5,7 @@ from matplotlib import cm
 import numpy as np
 
 YEARS = range(1995, 2015)
-MONTHS = range(5, 10)
+MONTHS = range(1, 13)
 
 METRICS = [
     'Chloride',
@@ -75,6 +75,7 @@ def station_map():
 def map_values_to_colors(x):
     """To be consumed by np.vectorize to transform nan values to black
        and provide the color map"""
+
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
@@ -82,11 +83,8 @@ def map_values_to_colors(x):
     else:
         return list(cm.hot(x, bytes=True)[:3])
 
-max_value = 0
-min_value = 10000
 
-
-def generate_lake_array(metric):
+def generate_lake_array(metric, remove_null_months):
     """Generate an array of raw Lake Champlain metric data, for creation of 2D
        and 3D GIFs"""
 
@@ -97,7 +95,12 @@ def generate_lake_array(metric):
         for month in MONTHS:
             station_data = station_map()
             if not lake_data[year][month]:  # if month contains no data
-                station_data[4]['value'] = 0  # show 0 for whole lake for month
+                if remove_null_months:
+                    continue
+                else:
+                    # show 0 for whole lake for month
+                    # 4 = random station, whole lake will be extrapolated
+                    station_data[4]['value'] = 0
             else:
                 for station in lake_data[year][month]:
                     data = lake_data[year][month][station]
@@ -141,6 +144,8 @@ def generate_lake_gif(metric):
     """Generate a GIF of Lake Champlain, displaying how a metric has changed
        over the course of the long term lake monitoring program"""
 
+    print "Generate 2D Lake gif for %s" % metric
+
     max_value = get_max_value(metric)
 
     data = generate_lake_array(metric)
@@ -158,7 +163,7 @@ def generate_lake_gifs(metrics=METRICS):
         generate_lake_gif(metric)
 
 
-def which_bin(reading, maximum=max_value, minimum=min_value, bins=15):
+def which_bin(reading, maximum, minimum, bins=15):
     """Given a reading and a number of bins, determine which bin a value
        belongs to"""
 
@@ -225,30 +230,32 @@ def get_min_of_data(data):
     return min_value
 
 
-# TODO: Each frame is only 1D, it needs to be 2D, colored appropriately
-# and its height should reflect its metric value
-
-# TODO: rotate arrays for lake brite
-def generate_lake_brite_gifs(metric):
+def generate_lake_brite_gifs(metric, remove_null_months=True):
     """Generate 3D Lake GIFs for consumption by LakeBrite"""
 
-    a = generate_lake_array(metric)
+    print "Generating 3D Lake GIFs of %s" % metric
+
+    a = generate_lake_array(metric, remove_null_months)
     max_value = get_max_of_data(a)
     min_value = get_min_of_data(a)
 
+    print "Rotating matrix"
     rotated = []
     for index, frame in enumerate(a):
         rotated.append(zip(*frame))
 
+    print "Increasing dimensions"
     lake_brite_frames = [increase_dimensions(frame, max_value, min_value) for
         frame in rotated]
 
+    print "Normalizing values"
     normalized = [normalize_values(frame, max_value) for frame in lake_brite_frames]
+    print "Mapping values to colors"
     a = map_value_to_color(normalized)
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
+    print "Generating GIFs"
     for index, array in enumerate(arrays):
         generate_gif(array, '3D-lake/%05d%s' % (
             index, metric.replace(' ', '-').lower()))
 
 generate_lake_brite_gifs('Temperature')
-# generate_lake_gif('Temperature')
