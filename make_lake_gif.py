@@ -187,18 +187,19 @@ def new_array():
     return array
 
 
-def increase_dimensions(data, max_value, min_value):
-    """Changes a list of 1-D array into a array of 2-D array. The input array is
-       48 items long (representing the longest axis of LakeBrite). The 2D array
-       will be 15 array of 48 items, the 15 array representing vertical slices
-       of LakeBrite."""
+def increase_dimensions(data, max_value, min_value, bins=15):
+    """Turns a 2D array into a 3D array. The value in the 2D matrix determines
+       is used to populate the third dimension. If the data ranges from 0-10
+       and a value of the 2D matrix is 5, it will look like this in the third
+       dimension: [5, 5, 5, 5, 5, 0, 0, 0, 0, 0]
+       The input is expected to be 10x50, the output is 10xbinsx50"""
 
     frames = []
     for row in data:
         lake_brite_frame = new_array()
         for reading_index, reading in enumerate(row):
             if not np.isnan(reading):
-                bin_number = -which_bin(reading, max_value, min_value)
+                bin_number = -which_bin(reading, max_value, min_value, bins)
                 for i in range(bin_number, 0):
                     try:
                         lake_brite_frame[i][reading_index] = reading
