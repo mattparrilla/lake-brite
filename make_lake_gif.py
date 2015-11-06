@@ -139,6 +139,7 @@ def map_value_to_color(a):
     return arrays
 
 
+# TODO: this is fucked, unfuck it
 def generate_lake_gif(metric):
     """Generate a GIF of Lake Champlain, displaying how a metric has changed
        over the course of the long term lake monitoring program"""
@@ -147,7 +148,7 @@ def generate_lake_gif(metric):
 
     max_value = get_max_value(metric)
 
-    data = generate_lake_array(metric)
+    data = generate_lake_array(metric, True)
     normalized = normalize_values(data, max_value)
     a = map_value_to_color(normalized)
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
@@ -198,8 +199,8 @@ def increase_dimensions(data, max_value, min_value, bins=15):
         lake_brite_frame = new_array()
         for reading_index, reading in enumerate(row):
             if not np.isnan(reading):
-                bin_number = -which_bin(reading, max_value, min_value, bins)
-                for i in range(bin_number, 0):
+                bin_number = which_bin(reading, max_value, min_value, bins)
+                for i in range(0, bin_number):
                     try:
                         lake_brite_frame[i][reading_index] = reading
                     except IndexError:
@@ -218,6 +219,7 @@ def stack_frames(frames):
     for frame in frames:
         flat_frames += frame
 
+    # TODO: if need to mirror orientation, reverse flat_frames
     return flat_frames
 
 
@@ -269,3 +271,5 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
     print "Generating GIFs"
     generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
+
+generate_lake_brite_gifs('Temperature')
