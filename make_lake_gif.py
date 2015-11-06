@@ -119,12 +119,11 @@ def normalize_values(array, max_value):
     data = array
     for i, x in enumerate(data):
         for j, y in enumerate(x):
-            for k, z in enumerate(y):
-                value = data[i][j][k]
-                if max_value:
-                    data[i][j][k] = value / max_value
-                else:
-                    data[i][j][k] = value
+            value = data[i][j]
+            if max_value:
+                data[i][j] = value / max_value
+            else:
+                data[i][j] = value
 
     return data
 
@@ -211,6 +210,17 @@ def increase_dimensions(data, max_value, min_value, bins=15):
     return frames
 
 
+def stack_frames(frames):
+    """Take 3D array of unknown length and flatten it to 2D array, concatenating
+       each item in the third dimension onto the previous"""
+
+    flat_frames = []
+    for frame in frames:
+        flat_frames += frame
+
+    return flat_frames
+
+
 def get_max_of_data(data):
     max_value = 0
     for i in data:
@@ -246,17 +256,18 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
         rotated.append(zip(*frame))
 
     print "Increasing dimensions"
-    lake_brite_frames = [increase_dimensions(frame, max_value, min_value) for
+    slices = [increase_dimensions(frame, max_value, min_value) for
         frame in rotated]
 
+    print "Stackining frames"
+    frames = [stack_frames(frame) for frame in slices]
+
     print "Normalizing values"
-    normalized = [normalize_values(frame, max_value) for frame in lake_brite_frames]
+    normalized = [normalize_values(frame, max_value) for frame in frames]
     print "Mapping values to colors"
     a = map_value_to_color(normalized)
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
     print "Generating GIFs"
-    for index, array in enumerate(arrays):
-        generate_gif(array, '3D-lake/%05d%s' % (
-            index, metric.replace(' ', '-').lower()))
+    generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
 
 generate_lake_brite_gifs('Temperature')
