@@ -165,6 +165,24 @@ def assign_colors_2d(data, max_temp, min_temp):
     return data
 
 
+def add_empty_slices(data, empty_slices=10):
+    """Adds the specified number of empty slices to the Lake Brite GIF"""
+
+    print len(data)
+    # print data[0]
+    print len(data[0])
+    print len(data[0][0])
+    for i in range(0, empty_slices):
+        data.append([[(0,) * 3] * 50] * 15)
+
+    # print data[-1]
+    print len(data[-1])
+    print len(data[-1][0])
+    print len(data)
+
+    return data
+
+
 def color_map(value, max_temp, min_temp):
     """Take a reading and map it to a color"""
 
@@ -221,10 +239,9 @@ def make_lake_brite_gif():
 
     three_d_data = increase_dimensions(data, max_temp, min_temp)
     colored_data = assign_colors(three_d_data, max_temp, min_temp)
-    frames = make_frames(colored_data)
+    add_empties = add_empty_slices(colored_data)
+    frames = make_frames(add_empties)
 
     arrays = np.asarray(frames, 'uint8')
 
     generate_gif(arrays, 'ushcn/temperature')
-
-make_three_d_gifs()

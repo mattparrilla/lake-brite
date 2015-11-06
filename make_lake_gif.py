@@ -79,9 +79,9 @@ def map_values_to_colors(x):
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
-        return list(cm.hot(0, bytes=True)[:3])
+        return list(cm.prism(0, bytes=True)[:3])
     else:
-        return list(cm.hot(x, bytes=True)[:3])
+        return list(cm.prism(x, bytes=True)[:3])
 
 
 def generate_lake_array(metric, remove_null_months):
@@ -137,6 +137,15 @@ def map_value_to_color(a):
         arrays.append(mapped_list)
 
     return arrays
+
+
+def add_empty_frames(data, empty_frames=10):
+    """Adds the specified number of empty frames to the Lake Brite GIF"""
+
+    for i in range(0, empty_frames):
+        data.append([[[0] * 3] * 50] * 150)
+
+    return data
 
 
 # TODO: this is fucked, unfuck it
@@ -270,10 +279,16 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
 
     print "Normalizing values"
     normalized = [normalize_values(frame, max_value) for frame in frames]
+
     print "Mapping values to colors"
     a = map_value_to_color(normalized)
-    arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
+
+    print "Adding empty frames"
+    with_empties = add_empty_frames(a, 10)
+
+    print "Converting to numpy array"
+    arrays = [np.asarray(with_empties[i], 'uint8')
+        for i, f in enumerate(with_empties)]
+
     print "Generating GIFs"
     generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
-
-generate_lake_brite_gifs('Temperature')

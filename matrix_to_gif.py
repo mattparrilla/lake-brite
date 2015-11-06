@@ -60,10 +60,19 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
         except EOFError:
             pass
 
+    frames = []
     for i, frame in enumerate(iter_frames(normal_gif)):
-        name = normal_gif.split('.')[0]
-        frame.save('%s/%05d_%s.GIF' % (directory, i, name),
-            **frame.info)
+        result = Image.new('RGB', (50, 150))
+        for i in range(0, 10):
+            img = frame.copy()
+            img.thumbnail((400, 400), Image.ANTIALIAS)
+            x = 0
+            y = i * 15
+            w, h = img.size
+            print('pos {0},{1} size {2},{3}'.format(x, y, w, h))
+            result.paste(img, (x, y, x + w, y + h))
+        frames.append(result)
+    generate_gif(frames, 'regular-image/test')
 
 
 # matrix = generate_sample_matrix(1)
@@ -78,4 +87,4 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
 #     arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
 #     gif = generate_gif(arrays, '%03d_pulse' % step)
 
-# normal_gif_to_lake_brite('robin.gif')
+normal_gif_to_lake_brite('brook-trout.gif')
