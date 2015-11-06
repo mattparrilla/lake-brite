@@ -187,7 +187,7 @@ def new_array():
     return array
 
 
-def increase_dimensions(data, max_value, min_value, bins=15):
+def increase_dimensions(data, max_value, min_value, bins=15, color_by_bin=True):
     """Turns a 2D array into a 3D array. The value in the 2D matrix determines
        is used to populate the third dimension. If the data ranges from 0-10
        and a value of the 2D matrix is 5, it will look like this in the third
@@ -202,9 +202,13 @@ def increase_dimensions(data, max_value, min_value, bins=15):
                 bin_number = which_bin(reading, max_value, min_value, bins)
                 for i in range(0, bin_number):
                     try:
-                        lake_brite_frame[i][reading_index] = reading
+                        if color_by_bin:
+                            lake_brite_frame[i][reading_index] = (
+                                reading / (bin_number - i))
+                        else:  # color purely by value
+                            lake_brite_frame[i][reading_index] = reading
                     except IndexError:
-                        reading
+                        print reading
 
         frames.append(lake_brite_frame)
 
