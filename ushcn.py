@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 from matrix_to_gif import generate_gif
+from make_lake_gif import stack_frames
 
 
 def csv_to_matrix(csv_filename='data/ushcn/btv_max_temp.csv'):
@@ -109,14 +110,11 @@ def new_array():
 
 
 # TODO: consider rotating array here
-def increase_dimensions(data=csv_to_matrix()):
+def increase_dimensions(data, max_temp, min_temp):
     """Changes a list of 1-D array into a array of 2-D array. The input array is
        48 items long (representing the longest axis of LakeBrite). The 2D array
        will be 15 array of 48 items, the 15 array representing vertical slices
        of LakeBrite."""
-
-    max_temp = get_max_of_data(data)
-    min_temp = get_min_of_data(data)
 
     all_years = []
     for year in data:
@@ -132,18 +130,37 @@ def increase_dimensions(data=csv_to_matrix()):
 
         all_years.append(year_frame)
 
-    return all_years, max_temp, min_temp
+    return all_years
 
 
-def assign_colors():
+def assign_colors(data, max_temp, min_temp):
     """Convert temperature values to RGB colors"""
-
-    data, max_temp, min_temp = increase_dimensions()
 
     for i, year in enumerate(data):
         for j, row in enumerate(year):
             for k, item in enumerate(row):
                 data[i][j][k] = color_map(item, max_temp, min_temp)
+
+    return data
+
+
+def make_frames(data, slices=10):
+    """Take an array of data of indeterminate length and group into groups of
+       10"""
+
+    all_frames = []
+    for i in range(len(data) - slices):
+        frame = data[i:i + 10]
+        all_frames.append(frame)
+    return all_frames
+
+
+def assign_colors_2d(data, max_temp, min_temp):
+    """Convert 2D array of temperature values to RGB colors"""
+
+    for i, year in enumerate(data):
+        for j, item in enumerate(year):
+            data[i][j] = color_map(item, max_temp, min_temp)
 
     return data
 
@@ -163,25 +180,51 @@ def color_map(value, max_temp, min_temp):
 
 def make_three_d_gifs():
     """Turn temperature dataset into 3d GIFs for LakeBrite"""
-    matrix = assign_colors()
-    length = len(matrix)
-    for index, frame in enumerate(matrix):
-        single_frame = []
+    data = csv_to_matrix()
+    max_temp = get_max_of_data(data)
+    min_temp = get_min_of_data(data)
+
+    three_d_data = increase_dimensions(data, max_temp, min_temp)
+    colored_data = assign_colors(three_d_data, max_temp, min_temp)
+    length = len(colored_data)
+    arrays = []
+    for index, frame in enumerate(colored_data):
         if index < length - 10:
-            single_frame = matrix[index:index + 10]
-        else:
-            single_frame = matrix[index:]
+            single_frame = colored_data[index:index + 10]
+            frame = stack_frames(single_frame)
+            arrays.append(np.asarray(frame))
 
-        arrays = [np.asarray(single_frame[i], 'uint8')
-            for i, f in enumerate(single_frame)]
-
-        generate_gif(arrays, 'temperature/%03d_temp' % index)
+    generate_gif(arrays, 'temperature/lake')
 
 
 def make_temp_gif():
     """A single GIF of the entire temperature dataset"""
-    matrix = assign_colors()
-    arrays = [np.asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
+    data = csv_to_matrix()
+    max_temp = get_max_of_data(data)
+    min_temp = get_min_of_data(data)
+
+    three_d_data = increase_dimensions(data, max_temp, min_temp)
+    colored_data = assign_colors(three_d_data, max_temp, min_temp)
+    arrays = [np.asarray(colored_data[i], 'uint8')
+        for i, f in enumerate(colored_data)]
     generate_gif(arrays, 'temp')
 
-make_temp_gif()
+
+def make_lake_brite_gif():
+    """A single GIF, "10 slices" tall that contains the USHCN temperature
+       visualization for consumption by Lake Brite"""
+
+    print "Making USHCN GIF"
+    data = csv_to_matrix()
+    max_temp = get_max_of_data(data)
+    min_temp = get_min_of_data(data)
+
+    three_d_data = increase_dimensions(data, max_temp, min_temp)
+    colored_data = assign_colors(three_d_data, max_temp, min_temp)
+    frames = make_frames(colored_data)
+
+    arrays = np.asarray(frames, 'uint8')
+
+    generate_gif(arrays, 'ushcn/temperature')
+
+make_three_d_gifs()

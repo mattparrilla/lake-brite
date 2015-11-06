@@ -269,5 +269,3 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
     arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
     print "Generating GIFs"
     generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
-
-generate_lake_brite_gifs('Temperature')
