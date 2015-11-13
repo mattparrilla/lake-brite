@@ -79,9 +79,9 @@ def map_values_to_colors(x):
     if np.isnan(x):
         return [0, 0, 0]
     elif x < 0:
-        return list(cm.prism(0, bytes=True)[:3])
+        return list(cm.jet(0, bytes=True)[:3])
     else:
-        return list(cm.prism(x, bytes=True)[:3])
+        return list(cm.jet(x, bytes=True)[:3])
 
 
 def generate_lake_array(metric, remove_null_months):
@@ -209,11 +209,12 @@ def increase_dimensions(data, max_value, min_value, bins=15, color_by_bin=True):
         for reading_index, reading in enumerate(row):
             if not np.isnan(reading):
                 bin_number = which_bin(reading, max_value, min_value, bins)
-                for i in range(0, bin_number):
+                for i in range(1, bin_number + 1):
                     try:
                         if color_by_bin:
+                            print reading, (reading / bin_number) * i, bin_number
                             lake_brite_frame[i][reading_index] = (
-                                reading / (bin_number - i))
+                                reading / bin_number) * i
                         else:  # color purely by value
                             lake_brite_frame[i][reading_index] = reading
                     except IndexError:
@@ -292,3 +293,5 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
 
     print "Generating GIFs"
     generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
+
+generate_lake_brite_gifs('Temperature')

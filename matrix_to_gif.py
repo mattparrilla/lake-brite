@@ -32,7 +32,7 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, directory='gif', duration=.5):
+def generate_gif(images, name, directory='gif', duration=.125):
     """Creates a gif from a list of PIL images"""
 
     gif_name = "%s/%s.gif" % (directory, name)
@@ -69,7 +69,6 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
             x = 0
             y = i * 15
             w, h = img.size
-            print('pos {0},{1} size {2},{3}'.format(x, y, w, h))
             result.paste(img, (x, y, x + w, y + h))
         frames.append(result)
     generate_gif(frames, 'regular-image/test')
@@ -87,4 +86,4 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
 #     arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
 #     gif = generate_gif(arrays, '%03d_pulse' % step)
 
-normal_gif_to_lake_brite('brook-trout.gif')
+# normal_gif_to_lake_brite('blackwhite_bt.gif')
