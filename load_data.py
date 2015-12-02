@@ -3,7 +3,7 @@ import csv
 import arrow
 
 
-def load_all_csvs(directory='data'):
+def load_all_csvs(directory='data/long-term-lake-monitoring'):
     """Takes a directory and loads all CSVs in the directory into memory
        as an array of objects. The objects from the 'data' dir look like:
        {
@@ -119,6 +119,18 @@ def get_max_value(metric):
     return max_value
 
 
+def get_min_value(metric):
+    """Get minimum value of dataset"""
+
+    data = get_metric(metric)
+    min_value = 1000000.
+    for i in data:
+        if float(i['Result']) < min_value:
+            min_value = float(i['Result'])
+
+    return min_value
+
+
 def group_metric_data_by_month(metric):
     """Takes dataset by metric, groups measurements by year, then month,
        then station.
@@ -143,7 +155,7 @@ def group_metric_data_by_month(metric):
 
         if year not in results:
             results[year] = {}
-            for i in range(13)[1:]:
+            for i in range(1, 13):
                 results[year][i] = {}
 
             results[year][month] = {

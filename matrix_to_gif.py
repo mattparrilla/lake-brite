@@ -32,7 +32,7 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, directory='gif/champlain', duration=.5):
+def generate_gif(images, name, directory='gif', duration=.125):
     """Creates a gif from a list of PIL images"""
 
     gif_name = "%s/%s.gif" % (directory, name)
@@ -40,7 +40,7 @@ def generate_gif(images, name, directory='gif/champlain', duration=.5):
     return gif_name
 
 
-def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
+def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
     """Take a normal, animated GIF and allow it to display on lake brite"""
 
     def iter_frames(gif):
@@ -60,17 +60,25 @@ def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
         except EOFError:
             pass
 
+    frames = []
     for i, frame in enumerate(iter_frames(normal_gif)):
-        name = normal_gif.split('.')[0]
-        frame.save('%s/%05d_%s.GIF' % (directory, i, name),
-            **frame.info)
+        result = Image.new('RGB', (50, 150))
+        for i in range(0, 10):
+            img = frame.copy()
+            img.thumbnail((400, 400), Image.ANTIALIAS)
+            x = 0
+            y = i * 15
+            w, h = img.size
+            result.paste(img, (x, y, x + w, y + h))
+        frames.append(result)
+    generate_gif(frames, 'regular-image/test')
 
 
 # matrix = generate_sample_matrix(1)
-# images = generate_pil_images(matrix)
+# # images = generate_pil_images(matrix)
 # arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-# print arrays
-# gif = generate_gif(arrays, 'array3')
+# # print arrays
+# gif = generate_gif(arrays, 'array4')
 # gif = generate_gif(images, 'test2')
 
 # for step in range(1, 51):
@@ -78,4 +86,4 @@ def normal_gif_to_lake_brite(normal_gif, directory='normal-gif'):
 #     arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
 #     gif = generate_gif(arrays, '%03d_pulse' % step)
 
-# normal_gif_to_lake_brite('robin.gif')
+# normal_gif_to_lake_brite('blackwhite_bt.gif')

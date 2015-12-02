@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+
+<head>
+<title>Lake Champlain GIFs</title>
+<link href='http://fonts.googleapis.com/css?family=Roboto:500,600,300,100' rel='stylesheet' type='text/css'>
+<meta property="og:description" content="Animated small multiples various metrics over time Lake Champlain since 1992." />
+<meta property="fb:admins" content="5735853" />
+<meta property="og:title" content="Lake Champlain Small Multiples" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="http://mattparrilla.github.io/lake-brite/pages-static/img/champlain.png" />
+<meta property="og:url" content="http://mattparrilla.github.io/lake-brite/" />
+<meta property="og:site_name" content="Matt Parrilla's Personal GitHub" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@mattparrilla">
+<meta name="twitter:title" content="Lake Champlain Small Multiples">
+<meta name="twitter:description" content="Animated small multiples various metrics over time Lake Champlain since 1992.">
+<meta name="twitter:creator" content="@mattparrilla">
+<meta name="twitter:image:src" content="http://mattparrilla.github.io/lake-brite/pages-static/img/champlain.png">
+<meta name="viewport" content="width=960">
+<style>
+    body {
+        background-color: black;
+        text-align: center;
+        color: white;
+        font-family: Roboto, sans-serif
+    }
+    h1 {
+        font-weight: 100;
+        font-size: 58px;
+        margin-bottom: 50px;
+    }
+    img {
+        height: 250px;
+        width: 50px;
+    }
+    .gifs {
+        display: block;
+        padding-left: 10px;
+    }
+    .lake-gif {
+        position: relative;
+        width: 100px;
+        display: inline-block;
+    }
+    .gif-label {
+        position: absolute;
+        height: 250px;
+        width: 250px;
+        font-weight: 500;
+        color: #ccc;
+        left: -5px;
+        transform: rotate(-90deg);
+        transform-origin: right, top;
+        -ms-transform: rotate(-90deg);
+        -ms-transform-origin:right, top;
+        -webkit-transform: rotate(-90deg);
+        -webkit-transform-origin:right, top;
+    }
+    .explanation {
+        text-align: left;
+        font-weight: 100;
+        font-size: 18px;
+        width: 800px;
+        display: block;
+        margin: 40px auto;
+        color: #ddd;
+    }
+    a {
+        color: #aaa;
+    }
+    .by-matt {
+        font-size: 12px;
+    }
+</style>
+</head>
+
+
+<body>
+
+<h1>Lake Champlain Small Multiples</h1>
+<div class="gifs">
+    <div class="lake-gif">
+        <p class="gif-label">Alkalinity</p>
+        <img src="pages-static/img/alkalinity.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Chloride</p>
+        <img src="pages-static/img/chloride.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Chlorophyl-a</p>
+        <img src="pages-static/img/chlorophyll-a.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Dissolved Oxygen</p>
+        <img src="pages-static/img/dissolved-oxygen.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Secchi Depth</p>
+        <img src="pages-static/img/secchi-depth.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Temperature</p>
+        <img src="pages-static/img/temperature.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Total Nitrogen</p>
+        <img src="pages-static/img/total-nitrogen.gif" />
+    </div>
+    <div class="lake-gif">
+        <p class="gif-label">Total Phosphorus</p>
+        <img src="pages-static/img/total-phosphorus.gif" />
+    </div>
+</div>
+
+<div class="explanation">
+    <p>The above is a prototype of an in-progress visualization on Lake Champlain. Each image is an animated GIF of readings from the 15 monitoring stations of the <a href="https://anrweb.vermont.gov/dec/dec/LongTermMonitoringLakes.aspx">Long Term Lake Monitoring Program</a>. The program has been gathering data continuously since 1992.</p>
+    <p>Each frame represents a month of data. The values have been interpolated throughout the lake from the 15 stations. The GIFs are in sync and looping through years 1992 through 2014. At 2 frames per second you can see the entire data set in just over 2 minutes!</p>
+    <p>Please excuse the lack of visual context (legend, timeline, etc.). As mentioned, it's a work in progress!</p>
+    <p class="by-matt">Made by <a href="//www.matthewparrilla.com">Matthew Parrilla</a></p>
+</div>
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59962368-1', 'auto');
+  ga('send', 'pageview');
+</script>
+</body>
+
+</html>
