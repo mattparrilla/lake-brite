@@ -1,4 +1,4 @@
-from load_data import group_metric_data_by_month, get_max_value
+from load_data import group_metric_data_by_month
 from interpolation import generate_interpolated_array
 from matrix_to_gif import generate_gif
 from matplotlib import cm
@@ -148,30 +148,6 @@ def add_empty_frames(data, empty_frames=10):
     return data
 
 
-# TODO: this is fucked, unfuck it
-def generate_lake_gif(metric):
-    """Generate a GIF of Lake Champlain, displaying how a metric has changed
-       over the course of the long term lake monitoring program"""
-
-    print "Generate 2D Lake gif for %s" % metric
-
-    max_value = get_max_value(metric)
-
-    data = generate_lake_array(metric, True)
-    normalized = normalize_values(data, max_value)
-    a = map_value_to_color(normalized)
-    arrays = [np.asarray(a[i], 'uint8') for i, f in enumerate(a)]
-    generate_gif(arrays, '2D-lake/%s' % metric.replace(' ', '-').lower())
-
-
-def generate_lake_gifs(metrics=METRICS):
-    """Generate 2D Lake GIFs for defined metrics"""
-
-    for metric in metrics:
-        print "Starting to generate: %s" % metric
-        generate_lake_gif(metric)
-
-
 def which_bin(reading, maximum, minimum, bins=15):
     """Given a reading and a number of bins, determine which bin a value
        belongs to"""
@@ -212,7 +188,6 @@ def increase_dimensions(data, max_value, min_value, bins=15, color_by_bin=True):
                 for i in range(1, bin_number + 1):
                     try:
                         if color_by_bin:
-                            print reading, (reading / bin_number) * i, bin_number
                             lake_brite_frame[i][reading_index] = (
                                 reading / bin_number) * i
                         else:  # color purely by value
@@ -226,8 +201,8 @@ def increase_dimensions(data, max_value, min_value, bins=15, color_by_bin=True):
 
 
 def stack_frames(frames):
-    """Take 3D array of unknown length and flatten it to 2D array, concatenating
-       each item in the third dimension onto the previous"""
+    """Take 3D matrix and flatten it into a 2D matrix by taking each row in
+       the 3rd dimension and concatenating them in a 2D matrix"""
 
     flat_frames = []
     for frame in frames:
@@ -257,8 +232,8 @@ def get_min_of_data(data):
     return min_value
 
 
-def generate_lake_brite_gifs(metric, remove_null_months=True):
-    """Generate 3D Lake GIFs for consumption by LakeBrite"""
+def generate_lake_brite_gif(metric, remove_null_months=True):
+    """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
 
@@ -294,4 +269,4 @@ def generate_lake_brite_gifs(metric, remove_null_months=True):
     print "Generating GIFs"
     generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
 
-generate_lake_brite_gifs('Temperature')
+generate_lake_brite_gif('Temperature')
