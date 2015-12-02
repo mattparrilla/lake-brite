@@ -2,6 +2,7 @@ from load_data import group_metric_data_by_month
 from interpolation import generate_interpolated_array
 from matrix_to_gif import generate_gif
 from matplotlib import cm
+from safe_path import safe_path
 import numpy as np
 
 YEARS = range(1995, 2015)
@@ -72,19 +73,7 @@ def station_map():
     }
 
 
-def map_values_to_colors(x):
-    """To be consumed by np.vectorize to transform nan values to black
-       and provide the color map"""
-
-    if np.isnan(x):
-        return [0, 0, 0]
-    elif x < 0:
-        return list(cm.jet(0, bytes=True)[:3])
-    else:
-        return list(cm.jet(x, bytes=True)[:3])
-
-
-def generate_lake_array(metric, remove_null_months):
+def generate_lake_array(metric, remove_null_months=True):
     """Generate an array of raw Lake Champlain metric data, for creation of 2D
        and 3D GIFs"""
 
@@ -128,8 +117,8 @@ def normalize_values(array, max_value):
     return data
 
 
-def map_value_to_color(a):
-    vfunc = np.vectorize(map_values_to_colors, otypes=[object])
+def map_value_to_color(a, color_map):
+    vfunc = np.vectorize(color_map, otypes=[object])
 
     arrays = []
     for array in a:
@@ -232,12 +221,12 @@ def get_min_of_data(data):
     return min_value
 
 
-def generate_lake_brite_gif(metric, remove_null_months=True):
+def generate_lake_brite_gif(metric, palette='jet', duration=0.125):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
 
-    a = generate_lake_array(metric, remove_null_months)
+    a = generate_lake_array(metric)
     max_value = get_max_of_data(a)
     min_value = get_min_of_data(a)
 
@@ -256,8 +245,21 @@ def generate_lake_brite_gif(metric, remove_null_months=True):
     print "Normalizing values"
     normalized = [normalize_values(frame, max_value) for frame in frames]
 
+    # TODO: this should live outside of `generate_lake_brite_gif()`
+    def color_map(x, palette=palette):
+        """To be consumed by np.vectorize to transform nan values to black
+        and provide the color map"""
+
+        if np.isnan(x):
+            return [0, 0, 0]
+        elif x < 0:
+            return list(cm.get_cmap(palette)(0, bytes=True)[:3])
+        else:
+            return list(cm.get_cmap(palette)(x, bytes=True)[:3])
+
+
     print "Mapping values to colors"
-    a = map_value_to_color(normalized)
+    a = map_value_to_color(normalized, color_map)
 
     print "Adding empty frames"
     with_empties = add_empty_frames(a, 10)
@@ -267,6 +269,8 @@ def generate_lake_brite_gif(metric, remove_null_months=True):
         for i, f in enumerate(with_empties)]
 
     print "Generating GIFs"
-    generate_gif(arrays, '3D-lake/%s' % metric.replace(' ', '-').lower())
+    path_to_gif = safe_path('gif/lake-animation/%s'
+        % metric.replace(' ', '-').lower())
+    generate_gif(arrays, path_to_gif, duration)
 
-generate_lake_brite_gif('Temperature')
+    return '%s.gif' % path_to_gif

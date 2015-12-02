@@ -1,11 +1,12 @@
 from PIL import Image
 import numpy as np
+from safe_path import safe_path
 
 
 def find_current_boundary():
     """Finds all non-white pixels in the low-res image of lake champlain
     for use in an image clipper"""
-    im = Image.open('champlain-low-res.png')
+    im = Image.open('%s' % safe_path('champlain-low-res.png'))
 
     lake_coords = []
     arr = np.array(im)

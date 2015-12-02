@@ -32,10 +32,10 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, directory='gif', duration=.125):
+def generate_gif(images, name, duration=.125):
     """Creates a gif from a list of PIL images"""
 
-    gif_name = "%s/%s.gif" % (directory, name)
+    gif_name = "%s.gif" % name
     writeGif(gif_name, images, duration)
     return gif_name
 

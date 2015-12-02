@@ -1,6 +1,7 @@
 import glob
 import csv
 import arrow
+from safe_path import safe_path
 
 
 def load_all_csvs(directory='data/long-term-lake-monitoring'):
@@ -22,7 +23,7 @@ def load_all_csvs(directory='data/long-term-lake-monitoring'):
     """
 
     all_data = []
-    for filename in glob.glob('%s/*.csv' % directory):
+    for filename in glob.glob('%s/*.csv' % safe_path(directory)):
         with open(filename, 'rU') as fin:
             f = csv.DictReader(fin)
             data = [l for l in f]
