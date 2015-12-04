@@ -1,4 +1,9 @@
 (function() {
+    $('#animation-slider').on('input change', function() {
+        console.log('this.value');
+        $('#animation-duration').html(this.value);
+    });
+
     $('form').submit(function(e) {
         e.preventDefault();
         var lakeAnimation = $('#lake-animation');
@@ -12,10 +17,8 @@
             }, {});
 
         $.post('/lake-gif', postJson)
-            .done(function(data) {
-                console.log('success');
-                console.log(data);
-                lakeAnimation.attr('src', '/image?' + Math.random())
+            .done(function() {
+                lakeAnimation.attr('src', '/lake-animation?' + Math.random())
                     .css('opacity', '1');
             });
     });

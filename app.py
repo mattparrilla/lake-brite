@@ -11,13 +11,13 @@ def index():
     return render_template('index.html', palettes=PALETTES, metrics=METRICS)
 
 
-@app.route('/image')
-def image():
+@app.route('/lake-animation')
+def lake_animation():
     return send_file('gif_maker/gif/lake-animation.gif', mimetype='image/gif')
 
 
-@app.route('/save-image')
-def save_image():
+@app.route('/save-lake-animation')
+def save_lake_animation():
     return send_file('gif_maker/gif/lake-animation.gif', mimetype='image/gif', as_attachment=True)
 
 

@@ -195,9 +195,9 @@ def stack_frames(frames):
 
     flat_frames = []
     for frame in frames:
-        flat_frames += frame
+        # reversing here changes vertical orientation of slices
+        flat_frames += list(reversed(frame))
 
-    # TODO: if need to mirror orientation, reverse flat_frames
     return flat_frames
 
 
