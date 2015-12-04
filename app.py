@@ -1,5 +1,8 @@
 import os
-from flask import Flask, send_file, render_template, request
+from flask import (
+    Flask, send_file, render_template, request, jsonify
+)
+from werkzeug import secure_filename
 from gif_maker.lake_animations import generate_lake_brite_gif, METRICS
 from gif_maker.colormap_palettes import PALETTES
 
@@ -38,15 +41,21 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+@app.route('/uploadajax', methods=['POST'])
+def upldfile():
     if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
+        files = request.files['file']
+        if files and allowed_file(files.filename):
+            filename = secure_filename(files.filename)
+            app.logger.info('FileName: ' + filename)
+            updir = os.path.join(basedir, 'gif_maker/gif/uploads/')
+            files.save(os.path.join(updir, filename))
+            file_size = os.path.getsize(os.path.join(updir, filename))
+            return jsonify(name=filename, size=file_size)
 
 if __name__ == '__main__':
     app.run(debug=True)
