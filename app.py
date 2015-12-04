@@ -21,9 +21,9 @@ def lake_gif():
     if request.method == 'POST':
         metric = request.form['metric']
         palette = request.form['palette']
-        duration = request.form['duration']
-        print palette, metric
-        return 'test'
+        duration = float(request.form['duration'])
+        return generate_lake_brite_gif(metric, palette, duration)
+
        # json.loads({
        #     'metric': metric,
        #     'palette': palette,
