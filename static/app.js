@@ -1,6 +1,5 @@
 (function() {
     $('#animation-slider').on('input change', function() {
-        console.log('this.value');
         $('#animation-duration').html(this.value);
     });
 
