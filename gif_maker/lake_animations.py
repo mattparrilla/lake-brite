@@ -257,7 +257,6 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125):
         else:
             return list(cm.get_cmap(palette)(x, bytes=True)[:3])
 
-
     print "Mapping values to colors"
     a = map_value_to_color(normalized, color_map)
 
@@ -269,8 +268,7 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125):
         for i, f in enumerate(with_empties)]
 
     print "Generating GIFs"
-    path_to_gif = safe_path('gif/lake-animation/%s'
-        % metric.replace(' ', '-').lower())
+    path_to_gif = safe_path('gif/lake-animation')
     generate_gif(arrays, path_to_gif, duration)
 
     return '%s.gif' % path_to_gif
