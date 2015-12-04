@@ -2,7 +2,6 @@ import os
 from flask import (
     Flask, send_file, render_template, request
 )
-from werkzeug import secure_filename
 from gif_maker.lake_animations import generate_lake_brite_gif, METRICS
 from gif_maker.colormap_palettes import PALETTES
 from gif_maker.matrix_to_gif import normal_gif_to_lake_brite
@@ -45,12 +44,12 @@ def allowed_file(filename):
 
 @app.route('/regular-gif')
 def regular_gif():
-    return send_file('gif_maker/gif/regular.gif', mimetype='image/gif')
+    return send_file('gif_maker/gif/video.gif', mimetype='image/gif')
 
 
 @app.route('/save-regular-gif')
 def save_regular_gif():
-    return send_file('gif_maker/gif/regular.gif', mimetype='image/gif', as_attachment=True)
+    return send_file('gif_maker/gif/video.gif', mimetype='image/gif', as_attachment=True)
 
 
 @app.route('/upload-gif', methods=['POST'])
@@ -61,9 +60,8 @@ def upload_gif():
         files = request.files['file']
         duration = float(request.form['gif-duration'])
         if files and allowed_file(files.filename):
-            filename = secure_filename(files.filename)
             updir = os.path.join(basedir, 'gif_maker/gif/uploads/')
-            file_path = os.path.join(updir, filename)
+            file_path = os.path.join(updir, 'regular.gif')
             files.save(file_path)
             return normal_gif_to_lake_brite(file_path, duration)
 
