@@ -68,11 +68,19 @@
         <div class="col-sm-6">
             <h2>GIF to Lake Brite Animation</h2>
             <div class="col-xs-8">
-            <form id="uploadform" method="post" enctype="multipart/form-data">
-                <label for="file">Select a file</label>
-                <input name="file" type="file">
-                <button id="submit" type="button">Upload</button>
-            </form>
+                <form id="regular-gif-form" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="gif-upload">Upload 50x15 GIF</label>
+                        <input name="file" type="file">
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Frame Rate (<span id="animation-duration">0.250</span>ms)</label><br />
+                        <input id="animation-slider" name="duration" type="range"
+                            min="0.0125" value="0.250" max="0.5" step="0.0125">
+                    </div>
+                    <button id="generate-regular-gif" type="submit" class="btn btn-default">Generate Animation</button>
+                    <a class="btn btn-default" href="{{ url_for('save_lake_animation')}}" role="button">Save GIF</a>
+                </form>
             </div>
             <div class="col-xs-4">
                 <img id="lake-animation" class="lake-brite-gif" src="{{ url_for('lake_animation') }}" />

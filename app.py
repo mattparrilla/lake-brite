@@ -45,10 +45,11 @@ def allowed_file(filename):
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-@app.route('/uploadajax', methods=['POST'])
-def upldfile():
+@app.route('/upload-gif', methods=['POST'])
+def upload_gif():
     if request.method == 'POST':
         files = request.files['file']
+        duration = float(request.form['duration'])
         if files and allowed_file(files.filename):
             filename = secure_filename(files.filename)
             app.logger.info('FileName: ' + filename)

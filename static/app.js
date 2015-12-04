@@ -23,23 +23,21 @@
     });
 
     $(function() {
-        $('#submit').click(function() {
+        $('#generate-regular-gif').click(function() {
             event.preventDefault();
-            var form_data = new FormData($('#uploadform')[0]);
+            var form_data = new FormData($('#regular-gif-form')[0]);
             $.ajax({
                 type: 'POST',
-                url: '/uploadajax',
+                url: '/upload-gif',
                 data: form_data,
                 contentType: false,
                 processData: false,
                 dataType: 'json'
-            }).done(function(data, textStatus, jqXHR){
+            }).done(function(data, textStatus, jqXHR) {
                 console.log(data);
                 console.log(textStatus);
                 console.log(jqXHR);
                 console.log('Success!');
-                $("#resultFilename").text(data['name']);
-                $("#resultFilesize").text(data['size']);
             }).fail(function(data){
                 alert('error!');
             });
