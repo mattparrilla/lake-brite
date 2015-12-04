@@ -69,7 +69,7 @@ def interpolate_station_data(station_array):
     return interpolated_array
 
 
-def generate_interpolated_array(data):
+def generate_interpolated_array(data, clip_to_lake):
     """Takes station data and a 50x10 matrix and returns nicely interpolated
     results in the shape of Lake Champlain"""
 
@@ -90,9 +90,13 @@ def generate_interpolated_array(data):
     # plt.colorbar()
     # plt.show()
 
-    lake_data = clip_data_to_lake(interpolated)
-    # plt.matshow(lake_data, cmap=plt.cm.winter)
-    # plt.colorbar()
-    # plt.show()
+    if clip_to_lake:
+        lake_data = clip_data_to_lake(interpolated)
+        # plt.matshow(lake_data, cmap=plt.cm.winter)
+        # plt.colorbar()
+        # plt.show()
 
-    return lake_data
+        return lake_data
+
+    else:
+        return interpolated

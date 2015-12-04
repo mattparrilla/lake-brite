@@ -57,6 +57,10 @@
                         <input id="animation-slider" name="duration" type="range"
                             min="0.0125" value="0.250" max="0.5" step="0.0125">
                     </div>
+                    <div class="form-group">
+                        <label for="clip-to-lake">Clip To Lake</label>
+                        <input type="checkbox" name="clip-to-lake" value="clip-to-lake" checked>
+                    </div>
                     <button type="submit" class="btn btn-default">Generate Animation</button>
                     <a class="btn btn-default" href="{{ url_for('save_lake_animation')}}" role="button">Save GIF</a>
                 </form>

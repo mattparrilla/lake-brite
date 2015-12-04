@@ -34,7 +34,13 @@ def lake_gif():
         metric = request.form['metric']
         palette = request.form['palette']
         duration = float(request.form['duration'])
-        return generate_lake_brite_gif(metric, palette, duration)
+        print request.form
+        if 'clip-to-lake' in request.form:
+            clip_to_lake = True
+        else:
+            clip_to_lake = False
+        print clip_to_lake
+        return generate_lake_brite_gif(metric, palette, duration, clip_to_lake)
 
 
 def allowed_file(filename):

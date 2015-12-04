@@ -73,7 +73,7 @@ def station_map():
     }
 
 
-def generate_lake_array(metric, remove_null_months=True):
+def generate_lake_array(metric, clip_to_lake, remove_null_months=True):
     """Generate an array of raw Lake Champlain metric data, for creation of 2D
        and 3D GIFs"""
 
@@ -95,7 +95,7 @@ def generate_lake_array(metric, remove_null_months=True):
                     data = lake_data[year][month][station]
                     monthly_value = sum(data) / len(data)
                     station_data[station]['value'] = monthly_value
-            array = generate_interpolated_array(station_data)
+            array = generate_interpolated_array(station_data, clip_to_lake)
             arrays.append(array.tolist())
 
     return arrays
@@ -221,12 +221,12 @@ def get_min_of_data(data):
     return min_value
 
 
-def generate_lake_brite_gif(metric, palette='jet', duration=0.125):
+def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=True):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
 
-    a = generate_lake_array(metric)
+    a = generate_lake_array(metric, clip_to_lake)
     max_value = get_max_of_data(a)
     min_value = get_min_of_data(a)
 
