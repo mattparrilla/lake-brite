@@ -1,10 +1,11 @@
 import os
 from flask import (
-    Flask, send_file, render_template, request, jsonify
+    Flask, send_file, render_template, request
 )
 from werkzeug import secure_filename
 from gif_maker.lake_animations import generate_lake_brite_gif, METRICS
 from gif_maker.colormap_palettes import PALETTES
+from gif_maker.matrix_to_gif import normal_gif_to_lake_brite
 
 UPLOAD_FOLDER = 'gif_maker/gif/uploads'
 ALLOWED_EXTENSIONS = set(['gif'])
@@ -42,21 +43,29 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+@app.route('/regular-gif')
+def regular_gif():
+    return send_file('gif_maker/gif/regular.gif', mimetype='image/gif')
+
+
+@app.route('/save-regular-gif')
+def save_regular_gif():
+    return send_file('gif_maker/gif/regular.gif', mimetype='image/gif', as_attachment=True)
 
 
 @app.route('/upload-gif', methods=['POST'])
 def upload_gif():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
     if request.method == 'POST':
         files = request.files['file']
-        duration = float(request.form['duration'])
+        duration = float(request.form['gif-duration'])
         if files and allowed_file(files.filename):
             filename = secure_filename(files.filename)
-            app.logger.info('FileName: ' + filename)
             updir = os.path.join(basedir, 'gif_maker/gif/uploads/')
-            files.save(os.path.join(updir, filename))
-            file_size = os.path.getsize(os.path.join(updir, filename))
-            return jsonify(name=filename, size=file_size)
+            file_path = os.path.join(updir, filename)
+            files.save(file_path)
+            return normal_gif_to_lake_brite(file_path, duration)
 
 if __name__ == '__main__':
     app.run(debug=True)

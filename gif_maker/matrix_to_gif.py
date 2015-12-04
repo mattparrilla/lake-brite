@@ -1,6 +1,7 @@
 from PIL import Image
 from numpy import asarray
 from libs.images2gif import writeGif
+from safe_path import safe_path
 import colorsys
 
 
@@ -35,12 +36,16 @@ def generate_pil_images(matrix):
 def generate_gif(images, name, duration=.125):
     """Creates a gif from a list of PIL images"""
 
-    gif_name = "%s.gif" % name
+    print 'writing gif'
+    print name
+    print duration
+    gif_name = '%s.gif' % name
     writeGif(gif_name, images, duration)
-    return gif_name
+    print 'written gif'
+    return name
 
 
-def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
+def normal_gif_to_lake_brite(normal_gif, duration):
     """Take a normal, animated GIF and allow it to display on lake brite"""
 
     def iter_frames(gif):
@@ -71,19 +76,5 @@ def normal_gif_to_lake_brite(normal_gif, directory='gif/regular-image'):
             w, h = img.size
             result.paste(img, (x, y, x + w, y + h))
         frames.append(result)
-    generate_gif(frames, 'regular-image/test')
 
-
-# matrix = generate_sample_matrix(1)
-# # images = generate_pil_images(matrix)
-# arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-# # print arrays
-# gif = generate_gif(arrays, 'array4')
-# gif = generate_gif(images, 'test2')
-
-# for step in range(1, 51):
-#     matrix = generate_sample_matrix(step)
-#     arrays = [asarray(matrix[i], 'uint8') for i, f in enumerate(matrix)]
-#     gif = generate_gif(arrays, '%03d_pulse' % step)
-
-# normal_gif_to_lake_brite('blackwhite_bt.gif')
+    return generate_gif(frames, safe_path('gif/video'), duration)
