@@ -83,36 +83,32 @@ def generate_lake_array(metric, clip_to_lake, remove_null_months=True):
     for year in YEARS:
         for month in MONTHS:
             station_data = station_map()
-            if not lake_data[year][month]:  # if month contains no data
+            if lake_data[year][month]:  # if month contains_data
+                for station in lake_data[year][month]:
+                    data = lake_data[year][month][station]
+                    monthly_value = sum(data) / len(data)
+                    station_data[station]['value'] = monthly_value
+            else:
                 if remove_null_months:
                     continue
                 else:
                     # show 0 for whole lake for month
                     # 4 = random station, whole lake will be extrapolated
                     station_data[4]['value'] = 0
-            else:
-                for station in lake_data[year][month]:
-                    data = lake_data[year][month][station]
-                    monthly_value = sum(data) / len(data)
-                    station_data[station]['value'] = monthly_value
             array = generate_interpolated_array(station_data, clip_to_lake)
             arrays.append(array.tolist())
 
     return arrays
 
 
-# TODO: probably need min value as well, otherwise scaling from max to zero
-def normalize_values(array, max_value):
-    """Normalize values to 0 -> 1"""
+def normalize_values(array, max_value, min_value):
+    """Normalize values to 0 -> 1 with 0 as data minimum and 1 as data max"""
 
     data = array
     for i, x in enumerate(data):
         for j, y in enumerate(x):
             value = data[i][j]
-            if max_value:
-                data[i][j] = value / max_value
-            else:
-                data[i][j] = value
+            data[i][j] = value / max_value
 
     return data
 
@@ -243,9 +239,12 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=
     frames = [stack_frames(frame) for frame in slices]
 
     print "Normalizing values"
-    normalized = [normalize_values(frame, max_value) for frame in frames]
+    normalized = [normalize_values(frame, max_value, min_value)
+        for frame in frames]
 
     # TODO: this should live outside of `generate_lake_brite_gif()`
+    # it lives here because I use `palette` from the arguments
+    # and can't figure out how to bind it to `color_map` otherwise
     def color_map(x, palette=palette):
         """To be consumed by np.vectorize to transform nan values to black
         and provide the color map"""

@@ -36,12 +36,8 @@ def generate_pil_images(matrix):
 def generate_gif(images, name, duration=.125):
     """Creates a gif from a list of PIL images"""
 
-    print 'writing gif'
-    print name
-    print duration
     gif_name = '%s.gif' % name
     writeGif(gif_name, images, duration)
-    print 'written gif'
     return name
 
 
