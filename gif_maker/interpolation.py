@@ -69,7 +69,7 @@ def interpolate_station_data(station_array):
     return interpolated_array
 
 
-def generate_interpolated_array(data, clip_to_lake):
+def generate_interpolated_array(data, clip_to_lake, tween_frames):
     """Takes station data and a 50x10 matrix and returns nicely interpolated
     results in the shape of Lake Champlain"""
 

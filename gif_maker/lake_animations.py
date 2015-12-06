@@ -73,9 +73,38 @@ def station_map():
     }
 
 
-def generate_lake_array(metric, clip_to_lake, remove_null_months=True):
+def tween(data, steps):
+    """Linearly 'tween' the data by the passed in number of steps
+       to smooth out the eventual animation"""
+
+    tweened_data = []
+    for i, layer in enumerate(data):
+        if i != len(data) - 1:  # if not last row
+            for step in range(steps):
+                if step % 5 == 0:
+                    tweened_data.append(layer)
+                    continue
+                else:
+                    tweened_slice = []
+                    for j, row in enumerate(layer):
+                        tweened_slice.append([])
+                        for k, value in enumerate(row):
+                            next_value = data[i + 1][j][k]
+                            tweened_value = value + step * (
+                                (next_value - value) / float(steps))
+                            tweened_slice[j].append(tweened_value)
+                    tweened_data.append(tweened_slice)
+
+        else:
+            tweened_data.append(layer)
+
+    return tweened_data
+
+
+def generate_lake_array(metric, clip_to_lake, tween_frames, remove_null_months=True):
     """Generate an array of raw Lake Champlain metric data, for creation of 2D
-       and 3D GIFs"""
+       and 3D GIFs.
+       `tween_frames` - number of frames to tween between data points"""
 
     lake_data = group_metric_data_by_month(metric)
 
@@ -95,10 +124,15 @@ def generate_lake_array(metric, clip_to_lake, remove_null_months=True):
                     # show 0 for whole lake for month
                     # 4 = random station, whole lake will be extrapolated
                     station_data[4]['value'] = 0
-            array = generate_interpolated_array(station_data, clip_to_lake)
-            arrays.append(array.tolist())
+            arrays.append(station_data)
 
-    return arrays
+    interpolated_array = [generate_interpolated_array(raw_data, clip_to_lake, 0)
+        for raw_data in arrays]
+
+    if tween_frames:
+        interpolated_array = tween(interpolated_array, tween_frames)
+
+    return interpolated_array
 
 
 def normalize_values(array, max_value, min_value):
@@ -217,12 +251,13 @@ def get_min_of_data(data):
     return min_value
 
 
-def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=True):
+def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
+        clip_to_lake=True, tween_frames=5):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
 
-    a = generate_lake_array(metric, clip_to_lake)
+    a = generate_lake_array(metric, clip_to_lake, tween_frames)
     max_value = get_max_of_data(a)
     min_value = get_min_of_data(a)
 
@@ -237,6 +272,7 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=
 
     print "Stackining frames"
     frames = [stack_frames(frame) for frame in slices]
+    print 'length of frames: ' + str(len(frames))
 
     print "Normalizing values"
     normalized = [normalize_values(frame, max_value, min_value)

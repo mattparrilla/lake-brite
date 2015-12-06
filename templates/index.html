@@ -34,60 +34,64 @@
     <div class="row lake-metric-animation">
         <div class="col-sm-6">
             <h2>Lake Metric Animation</h2>
-            <div class="col-xs-8">
-                <form id="lake-animation-form">
-                    <div class="form-group">
-                        <label for="metric">Metric</label><br />
-                        <select name="metric" class="form-control">
-                            {% for metric in metrics %}
-                                <option>{{ metric }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="palette">Palette</label><br />
-                        <select name="palette" class="form-control">
-                            {% for palette in palettes %}
-                                <option>{{ palette }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="duration">Frame Rate (<span id="animation-duration">0.250</span>ms)</label><br />
-                        <input id="animation-slider" name="duration" type="range"
-                            min="0.0125" value="0.250" max="0.5" step="0.0125">
-                    </div>
-                    <div class="form-group">
-                        <label for="clip-to-lake">Clip To Lake</label>
-                        <input type="checkbox" name="clip-to-lake" value="clip-to-lake" checked>
-                    </div>
-                    <button type="submit" class="btn btn-default">Generate Animation</button>
-                    <a class="btn btn-default" href="{{ url_for('save_lake_animation')}}" role="button">Save GIF</a>
-                </form>
-            </div>
-            <div class="col-xs-4">
-                <img id="lake-animation" class="lake-brite-gif" src="{{ url_for('lake_animation') }}" />
+            <div class="row">
+                <div class="col-xs-8">
+                    <form id="lake-animation-form">
+                        <div class="form-group">
+                            <label for="metric">Metric</label><br />
+                            <select name="metric" class="form-control">
+                                {% for metric in metrics %}
+                                    <option>{{ metric }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="palette">Palette</label><br />
+                            <select name="palette" class="form-control">
+                                {% for palette in palettes %}
+                                    <option>{{ palette }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">Frame Rate (<span id="animation-duration">0.250</span>ms)</label><br />
+                            <input id="animation-slider" name="duration" type="range"
+                                min="0.0125" value="0.250" max="0.5" step="0.0125">
+                        </div>
+                        <div class="form-group">
+                            <label for="clip-to-lake">Clip To Lake</label>
+                            <input type="checkbox" name="clip-to-lake" value="clip-to-lake" checked>
+                        </div>
+                        <button type="submit" class="btn btn-default">Generate Animation</button>
+                        <a class="btn btn-default" href="{{ url_for('save_lake_animation')}}" role="button">Save GIF</a>
+                    </form>
+                </div>
+                <div class="col-xs-4">
+                    <img id="lake-animation" class="lake-brite-gif" src="{{ url_for('lake_animation') }}" />
+                </div>
             </div>
         </div>
         <div class="col-sm-6">
             <h2>GIF to Lake Brite Animation</h2>
-            <div class="col-xs-8">
-                <form id="regular-gif-form" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="gif-upload">Upload 50x15 GIF</label>
-                        <input name="file" type="file">
-                    </div>
-                    <div class="form-group">
-                        <label for="gif-duration">Frame Rate (<span id="gif-duration">0.125</span>ms)</label><br />
-                        <input id="duration-slider" name="gif-duration" type="range"
-                            min="0.0125" value="0.125" max="0.5" step="0.0125">
-                    </div>
-                    <button id="generate-regular-gif" type="submit" class="btn btn-default">Generate Animation</button>
-                    <a class="btn btn-default" href="{{ url_for('save_regular_gif')}}" role="button">Save GIF</a>
-                </form>
-            </div>
-            <div class="col-xs-4">
-                <img id="regular-gif" class="lake-brite-gif" src="{{ url_for('regular_gif') }}" />
+            <div class="row">
+                <div class="col-xs-8">
+                    <form id="regular-gif-form" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="gif-upload">Upload 50x15 GIF</label>
+                            <input name="file" type="file">
+                        </div>
+                        <div class="form-group">
+                            <label for="gif-duration">Frame Rate (<span id="gif-duration">0.125</span>ms)</label><br />
+                            <input id="duration-slider" name="gif-duration" type="range"
+                                min="0.0125" value="0.125" max="0.5" step="0.0125">
+                        </div>
+                        <button id="generate-regular-gif" type="submit" class="btn btn-default">Generate Animation</button>
+                        <a class="btn btn-default" href="{{ url_for('save_regular_gif')}}" role="button">Save GIF</a>
+                    </form>
+                </div>
+                <div class="col-xs-4">
+                    <img id="regular-gif" class="lake-brite-gif" src="{{ url_for('regular_gif') }}" />
+                </div>
             </div>
         </div>
     </div>
