@@ -4,6 +4,7 @@ from matrix_to_gif import generate_gif
 from matplotlib import cm
 from safe_path import safe_path
 import numpy as np
+from memory_profiler import profile
 
 YEARS = range(1995, 2015)
 MONTHS = range(1, 13)
@@ -221,6 +222,7 @@ def get_min_of_data(data):
     return min_value
 
 
+@profile
 def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=True):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
@@ -272,3 +274,5 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125, clip_to_lake=
     generate_gif(arrays, path_to_gif, duration)
 
     return '%s.gif' % path_to_gif
+
+generate_lake_brite_gif('Temperature')
