@@ -32,7 +32,7 @@ def load_all_csvs(directory='data/long-term-lake-monitoring'):
     return all_data
 
 
-def print_all_values_of_field(field, data=load_all_csvs()):
+def print_all_values_of_field(field, data):
     """Print all possible values of a given field"""
 
     possible_values = []
@@ -42,7 +42,7 @@ def print_all_values_of_field(field, data=load_all_csvs()):
             print measurement[field]
 
 
-def print_all_metrics(data=load_all_csvs()):
+def print_all_metrics(data):
     """Print all possible values of a given field"""
 
     possible_values = []
@@ -53,7 +53,7 @@ def print_all_metrics(data=load_all_csvs()):
             print metric
 
 
-def print_all_metrics_and_year(data=load_all_csvs()):
+def print_all_metrics_and_year(data):
     """Print a dict of all metrics with the counts of reading by year"""
 
     possible_values = []
@@ -74,10 +74,11 @@ def print_all_metrics_and_year(data=load_all_csvs()):
     print readings_by_year
 
 
-def get_metric(metric, max_depth=3, data=load_all_csvs()):
+def get_metric(metric, max_depth=3):
     """Reads all lake monitoring data, picking out results by metric.
        Returns an array of measurement objects"""
 
+    data = load_all_csvs()
     metric_data = []
     for measurement in data:
         if measurement['Test'] == metric:
@@ -172,3 +173,7 @@ def group_metric_data_by_month(metric):
             results[year][month][station].append(value)
 
     return results
+
+
+if __name__ == '__main__':
+    group_metric_data_by_month('Temperature')
