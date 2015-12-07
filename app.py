@@ -35,12 +35,13 @@ def lake_gif():
         palette = request.form['palette']
         duration = float(request.form['duration'])
         tween_frames = int(request.form['tween-frames'])
+        empty_frames = int(request.form['empty-frames'])
         if 'clip-to-lake' in request.form:
             clip_to_lake = True
         else:
             clip_to_lake = False
         return generate_lake_brite_gif(metric, palette, duration, clip_to_lake,
-            tween_frames)
+            tween_frames, empty_frames)
 
 
 def allowed_file(filename):

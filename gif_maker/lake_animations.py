@@ -255,7 +255,7 @@ def get_min_of_data(data):
 
 
 def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
-        clip_to_lake=True, tween_frames=0):
+        clip_to_lake=True, tween_frames=0, empty_frames=0):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
@@ -298,7 +298,7 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
     a = map_value_to_color(normalized, color_map)
 
     print "Adding empty frames"
-    with_empties = add_empty_frames(a, 10)
+    with_empties = add_empty_frames(a, empty_frames)
 
     print "Converting to numpy array"
     arrays = [np.asarray(with_empties[i], 'uint8')

@@ -1,14 +1,19 @@
 (function() {
-    $('#animation-slider').on('input change', function() {
-        $('#animation-duration').html(this.value);
-    });
+    function updateSlider(slider, label) {
+        $('#' + slider).on('input change', function() {
+            $('#' + label).html(this.value);
+        });
+    }
 
-    $('#duration-slider').on('input change', function() {
-        $('#gif-duration').html(this.value);
-    });
+    var sliders = [
+        {slider: 'animation-slider', label: 'animation-duration'},
+        {slider: 'duration-slider', label: 'animation-duration'},
+        {slider: 'tween-frames', label: 'frames-to-tween'},
+        {slider: 'empty-frames', label: 'frames-at-end'},
+    ];
 
-    $('#tween-frames').on('input change', function() {
-        $('#frames-to-tween').html(this.value);
+    sliders.forEach(function(item) {
+        updateSlider(item.slider, item.label);
     });
 
     $('#lake-animation-form').submit(function(e) {
