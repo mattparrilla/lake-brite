@@ -73,15 +73,18 @@ def station_map():
     }
 
 
-def tween(data, steps):
-    """Linearly 'tween' the data by the passed in number of steps
+def tween(data, frames):
+    """Linearly 'tween' the data by the passed in number of frames
        to smooth out the eventual animation"""
 
+    # steps is one more than frames b/c 1 extra frame means 2 steps from prev
+    # to next value
+    steps = frames + 1
     tweened_data = []
     for i, layer in enumerate(data):
         if i != len(data) - 1:  # if not last row
             for step in range(steps):
-                if step % 5 == 0:
+                if step % steps == 0:
                     tweened_data.append(layer)
                     continue
                 else:
@@ -252,7 +255,7 @@ def get_min_of_data(data):
 
 
 def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
-        clip_to_lake=True, tween_frames=5):
+        clip_to_lake=True, tween_frames=0):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
@@ -272,7 +275,6 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
 
     print "Stackining frames"
     frames = [stack_frames(frame) for frame in slices]
-    print 'length of frames: ' + str(len(frames))
 
     print "Normalizing values"
     normalized = [normalize_values(frame, max_value, min_value)

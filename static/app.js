@@ -7,6 +7,10 @@
         $('#gif-duration').html(this.value);
     });
 
+    $('#tween-frames').on('input change', function() {
+        $('#frames-to-tween').html(this.value);
+    });
+
     $('#lake-animation-form').submit(function(e) {
         event.preventDefault();
         var lakeAnimation = $('#lake-animation');
