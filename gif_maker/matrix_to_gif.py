@@ -1,5 +1,5 @@
 from PIL import Image
-from numpy import asarray
+from numpy import rot90, asarray
 from libs.images2gif import writeGif
 from safe_path import safe_path
 import colorsys
@@ -33,11 +33,32 @@ def generate_pil_images(matrix):
         for i, f in enumerate(matrix)]
 
 
-def generate_gif(images, name, duration=.125):
+def add_tracer(images, tracer_length=50.0):
+    number_of_frames = len(images)
+    for frame, image in enumerate(images):
+        # rot90(image, 2)
+        tracer_index = int(frame * (tracer_length / number_of_frames))
+
+        if tracer_length == 50.0:
+            image[0, tracer_index] = (255, 255, 255)
+            if tracer_index >= 1:
+                image[0, tracer_index - 1] = (155, 155, 155)
+            if tracer_index >= 2:
+                image[0, tracer_index - 2] = (75, 75, 75)
+        else:
+            image[0, tracer_index * 2] = (255, 255, 255)
+            if tracer_index >= 1:
+                image[0, (tracer_index - 1) * 2] = (155, 155, 155)
+            if tracer_index >= 2:
+                image[0, (tracer_index - 2) * 2] = (75, 75, 75)
+    return images
+
+
+def generate_gif(images, name, duration=.1):
     """Creates a gif from a list of PIL images"""
 
     gif_name = '%s.gif' % name
-    writeGif(gif_name, images, duration)
+    writeGif(gif_name, add_tracer(images, 25.0), duration)
     return name
 
 

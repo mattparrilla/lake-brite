@@ -229,7 +229,7 @@ def stack_frames(frames):
     flat_frames = []
     for frame in frames:
         # reversing here changes vertical orientation of slices
-        flat_frames += list(reversed(frame))
+        flat_frames += list(frame)
 
     return flat_frames
 
@@ -254,8 +254,8 @@ def get_min_of_data(data):
     return min_value
 
 
-def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
-        clip_to_lake=True, tween_frames=0, empty_frames=0):
+def generate_lake_brite_gif(metric, palette='winter_r', duration=0.125,
+        clip_to_lake=True, tween_frames=1, empty_frames=0):
     """Generate 3D Lake GIF for consumption by LakeBrite"""
 
     print "Generating 3D Lake GIFs of %s" % metric
@@ -301,7 +301,7 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
     with_empties = add_empty_frames(a, empty_frames)
 
     print "Converting to numpy array"
-    arrays = [np.asarray(with_empties[i], 'uint8')
+    arrays = [np.fliplr(np.asarray(with_empties[i], 'uint8'))
         for i, f in enumerate(with_empties)]
 
     print "Generating GIFs"
@@ -311,4 +311,4 @@ def generate_lake_brite_gif(metric, palette='jet', duration=0.125,
     return '%s.gif' % path_to_gif
 
 if __name__ == '__main__':
-    generate_lake_brite_gif('Temperature')
+    generate_lake_brite_gif('Total Phosphorus')
