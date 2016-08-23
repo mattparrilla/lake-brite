@@ -8,6 +8,8 @@ Generate animations for Lake Brite with [this web application](https://lake-brit
 
 ![LakeBrite display](/static/lb.gif)
 
+An animation of lake temperature over 15 years being run in a [LakeBrite simulator](https://github.com/joeydi/lakebrite). The north end of the lake is to the left in the image, the western edge runs along the nodes "closest" to the viewer.
+
 ##About The Display
 
 The LED matrix is approximately 24ft wide by 9ft tall by 5ft deep. In terms of LED nodes, this translates to 50x15x10.
