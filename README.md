@@ -6,7 +6,7 @@ Creating visualizations using the 7,500 node LED matrix at Burlington's [ECHO Ce
 
 Generate animations for Lake Brite with [this web application](https://lake-brite.herokuapp.com/)
 
-![LakeBrite display](http://i.imgur.com/8GAk0KX.jpg)
+![LakeBrite display](/static/lb.gif)
 
 ##About The Display
 
