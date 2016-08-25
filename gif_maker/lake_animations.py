@@ -311,4 +311,4 @@ def generate_lake_brite_gif(metric, palette='winter_r', duration=0.125,
     return '%s.gif' % path_to_gif
 
 if __name__ == '__main__':
-    generate_lake_brite_gif('Total Phosphorus')
+    generate_lake_brite_gif('Temperature')
