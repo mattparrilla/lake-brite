@@ -1,8 +1,8 @@
-#Lake Brite
+# Lake Brite
 
 Creating visualizations using the 7,500 node LED matrix at Burlington's [ECHO Center](http://www.echovermont.org/).
 
-##Lake Brite Animation Generator
+## Lake Brite Animation Generator
 
 Generate animations for Lake Brite with [this web application](https://lake-brite.herokuapp.com/)
 
@@ -10,7 +10,7 @@ Generate animations for Lake Brite with [this web application](https://lake-brit
 
 An animation of lake temperature over 15 years being run in a [LakeBrite simulator](https://github.com/joeydi/lakebrite). The north end of the lake is to the left in the image, the western edge runs along the nodes "closest" to the viewer.
 
-##About The Display
+## About The Display
 
 The LED matrix is approximately 24ft wide by 9ft tall by 5ft deep. In terms of LED nodes, this translates to 50x15x10.
 
@@ -18,7 +18,7 @@ The LED matrix is approximately 24ft wide by 9ft tall by 5ft deep. In terms of L
 
 Each node is capable of being programmed to display 8-bit RGB colors.
 
-##Programming The Display
+## Programming The Display
 
 The LED matrix expects a series of GIFs as its input. Each GIF contains the entire state of the matrix at any given time and the display is animated by looping through a series of GIFs.
 
@@ -30,7 +30,7 @@ Each individual GIF must be 50x15 in size and contain 10 frames. The first frame
 
 In order to animate the display, a series of GIFs of these dimensions and frame length must be passed along.
 
-##Low-Res Lake Champlain
+## Low-Res Lake Champlain
 
 Not necessarily going to get to use, but here's a super low-res (50x10) image of Lake Champlain I whipped up!
 
